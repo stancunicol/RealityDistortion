@@ -97,3 +97,23 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# VSCode settings except project config
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Rider project files
+.idea/
+*.sln.iml
+
+# Unity Plastic SCM (if unused)
+.plastic/
+Workspace/
+workspace.meta
+
+# Misc local files
+*.swp
+*.swm
