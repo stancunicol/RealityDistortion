@@ -12,7 +12,7 @@
 /[Uu]ser[Ss]ettings/
 *.log
 
-# By default unity supports Blender asset imports, *.blend1 blender files do not need to be commited to version control.
+# Blender backup files (do not commit)
 *.blend1
 *.blend1.meta
 
@@ -86,7 +86,6 @@ InitTestScene*.unity*
 /[Aa]ssets/Addressables_Temp*
 # By default, Addressables content builds will generate addressables_content_state.bin
 # files in platform-specific subfolders, for example:
-# /Assets/AddressableAssetsData/OSX/addressables_content_state.bin
 /[Aa]ssets/AddressableAssetsData/*/*.bin*
 
 # Visual Scripting auto-generated files
