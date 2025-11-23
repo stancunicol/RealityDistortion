@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerWalkCamera : MonoBehaviour
 {
-    public Camera playerCamera; // Folosim direct Main Camera
+    public Camera playerCamera;
     public float walkSpeed = 3f;
     public float mouseSensitivity = 400f;
 
@@ -20,7 +20,6 @@ public class PlayerWalkCamera : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // Dacă nu e setată camera în Inspector, o ia automat pe MainCamera
         if (playerCamera == null)
             playerCamera = Camera.main;
     }
@@ -43,10 +42,16 @@ public class PlayerWalkCamera : MonoBehaviour
 
         Vector3 move = transform.right * horizontal + transform.forward * vertical;
 
+        // --- Walking & Running ---
         bool isWalking = move.magnitude > 0.1f;
-        animator.SetBool("isWalking", isWalking);
+        bool isRunning = isWalking && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
 
-        controller.Move(move * walkSpeed * Time.deltaTime);
+        animator.SetBool("isWalking", isWalking);
+        animator.SetBool("isRunning", isRunning);
+
+        // RunSpeed este dublu față de WalkSpeed
+        float currentSpeed = isRunning ? walkSpeed * 2f : walkSpeed;
+        controller.Move(move * currentSpeed * Time.deltaTime);
 
         // --- Gravitație ---
         if (!controller.isGrounded)
