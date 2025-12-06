@@ -28,7 +28,7 @@ public class TitleBlink : MonoBehaviour
 
             if (fullDisappear)
             {
-                Dispariție completă (enable off)
+                // Dispariție completă (enable off)
                 yield return StartCoroutine(FadeTo(0f)); // se estompează întâi
                 text.enabled = false;
 
