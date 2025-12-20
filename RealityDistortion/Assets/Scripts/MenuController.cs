@@ -15,10 +15,16 @@ public class MenuController : MonoBehaviour
         SceneManager.LoadScene("CreditsScene");
     }
 
-    // GoBack → MainScene
+    // GoBack → MenuScene
     public void GoBack()
     {
         SceneManager.LoadScene("MenuScene");
+    }
+
+    // DescriptionButton → DescriptionScene
+    public void OpenDescription()
+    {
+        SceneManager.LoadScene("DescriptionScene");
     }
 
     // ExitButton → închide jocul
