@@ -3,7 +3,17 @@ guid: 85277b792a82e2c4299b5b5c43d001c9
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Frame.001
+    second: {fileID: 2100000, guid: ab329c1ae932ba446835b3f111cbe16e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Photo
+    second: {fileID: 2100000, guid: 49136c1e8baab3640b2b5499e2b90460, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
