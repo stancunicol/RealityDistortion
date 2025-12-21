@@ -13,15 +13,13 @@ public class TVSwitch : MonoBehaviour
     [SerializeField] private GameObject arm;
     [SerializeField] private AnimationClip reachClip;
 
-    [Header("Video / Settings")]
-    [SerializeField] private VideoPlayer videoPlayer;
+    [Header("Settings")]
     [SerializeField] private float channelInterval = 1.0f;
-
-    [Header("Pause Between Channels")]
     [SerializeField] private float pauseDuration = 0.3f;
-
-    [Header("Audio")]
     [SerializeField] private AudioSource staticAudio;
+    [SerializeField] private float creepyDelay = 1.0f;
+    [SerializeField] private float flickerSpeed = 0.15f;
+    [SerializeField] private VideoPlayer videoPlayer;
 
     private Animator armAnimator;
     private MeshRenderer meshRenderer;
@@ -36,22 +34,20 @@ public class TVSwitch : MonoBehaviour
     private float pauseTimer = 0f;
     private Material lastChannelMaterial;
 
+    private float creepyTimer = 0f;
+    private bool flickerActive = false;
+    private float flickerTimer = 0f;
+
     void Start()
     {
         armAnimator = arm != null ? arm.GetComponent<Animator>() : null;
         meshRenderer = GetComponent<MeshRenderer>();
-
         Material[] mats = meshRenderer.materials;
         mats[2] = screenOff;
         meshRenderer.materials = mats;
-
-        if (videoPlayer != null)
-            videoPlayer.Stop();
-
-        if (arm != null)
-            arm.SetActive(false);
-
-        channelMaterials = new Material[] { screenStatic1, screenStatic2, screenCreepy };
+        if (arm != null) arm.SetActive(false);
+        channelMaterials = new Material[] { screenStatic1, screenStatic2 };
+        if (videoPlayer != null) videoPlayer.enabled = true;
     }
 
     void Update()
@@ -60,109 +56,134 @@ public class TVSwitch : MonoBehaviour
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit) && hit.transform == transform)
-            {
                 ToggleTV();
-            }
         }
 
         if (isOn && !isCreepyActive)
-        {
-            if (isPausing)
-            {
-                pauseTimer += Time.deltaTime;
-                if (pauseTimer >= pauseDuration)
-                {
-                    isPausing = false;
-                    pauseTimer = 0f;
-                    SetTVMaterial(lastChannelMaterial);
-                    UpdateStaticAudio();
-                }
-            }
-            else
-            {
-                timer += Time.deltaTime;
-                if (timer >= channelInterval)
-                {
-                    timer = 0f;
-                    currentChannel++;
+            HandleChannelSwitching();
 
-                    if (currentChannel >= channelMaterials.Length - 1)
-                    {
-                        ActivateCreepyChannel();
-                    }
-                    else
-                    {
-                        lastChannelMaterial = channelMaterials[currentChannel];
-                        SetTVMaterial(screenOff);
-                        if (staticAudio != null && staticAudio.isPlaying)
-                            staticAudio.Stop();
-                        isPausing = true;
-                    }
+        if (flickerActive)
+            HandleFlicker();
+
+        if (isCreepyActive)
+            HandleCreepyDelay();
+    }
+
+    void HandleChannelSwitching()
+    {
+        if (isPausing)
+        {
+            pauseTimer += Time.deltaTime;
+            if (pauseTimer >= pauseDuration)
+            {
+                isPausing = false;
+                pauseTimer = 0f;
+                SetTVMaterial(lastChannelMaterial);
+                UpdateStaticAudio();
+            }
+        }
+        else
+        {
+            timer += Time.deltaTime;
+            if (timer >= channelInterval)
+            {
+                timer = 0f;
+                currentChannel++;
+                if (currentChannel >= channelMaterials.Length)
+                    StartCreepyStage();
+                else
+                {
+                    lastChannelMaterial = channelMaterials[currentChannel];
+                    SetTVMaterial(screenOff);
+                    if (staticAudio != null && staticAudio.isPlaying) staticAudio.Stop();
+                    if (videoPlayer != null) videoPlayer.enabled = true;
+                    isPausing = true;
                 }
             }
         }
     }
 
-    void ToggleTV()
-    {
-        isOn = !isOn;
-
-        SetTVMaterial(isOn ? screenStatic1 : screenOff);
-
-        if (videoPlayer != null)
-        {
-            if (isOn)
-                videoPlayer.Play();
-            else
-                videoPlayer.Stop();
-        }
-
-        if (!isOn && arm != null)
-            arm.SetActive(false);
-
-        currentChannel = 0;
-        timer = 0f;
-        isCreepyActive = false;
-        isPausing = false;
-        pauseTimer = 0f;
-
-        UpdateStaticAudio();
-    }
-
-    void SetTVMaterial(Material mat)
-    {
-        Material[] mats = meshRenderer.materials;
-        mats[2] = mat;
-        meshRenderer.materials = mats;
-    }
-
-    void ActivateCreepyChannel()
+    void StartCreepyStage()
     {
         isCreepyActive = true;
-        SetTVMaterial(screenCreepy);
+        creepyTimer = 0f;
+        flickerActive = true;
+        if (videoPlayer != null) videoPlayer.enabled = false;
+        if (staticAudio != null && staticAudio.isPlaying) staticAudio.Stop();
+    }
 
+    void HandleCreepyDelay()
+    {
+        creepyTimer += Time.deltaTime;
+        if (creepyTimer >= creepyDelay)
+        {
+            flickerActive = false;
+            SetTVMaterial(screenCreepy, true);
+            ActivateArmCreepy();
+            isCreepyActive = false;
+        }
+    }
+
+    void HandleFlicker()
+    {
+        flickerTimer += Time.deltaTime;
+        if (flickerTimer >= flickerSpeed)
+        {
+            flickerTimer = 0f;
+            Material current = meshRenderer.materials[2].name.Contains(screenOff.name) ? lastChannelMaterial : screenOff;
+            if (meshRenderer.materials[2].name.Contains(screenCreepy.name))
+                current = screenCreepy;
+            SetTVMaterial(current, current == screenCreepy);
+        }
+    }
+
+    void ActivateArmCreepy()
+    {
         if (arm != null)
         {
             arm.SetActive(true);
             if (armAnimator != null && reachClip != null)
                 armAnimator.Play(reachClip.name, -1, 0f);
         }
+    }
 
-        if (staticAudio != null && staticAudio.isPlaying)
-            staticAudio.Stop();
+    void ToggleTV()
+    {
+        isOn = !isOn;
+        SetTVMaterial(isOn ? screenStatic1 : screenOff);
+        if (videoPlayer != null) videoPlayer.enabled = isOn;
+        if (!isOn && arm != null) arm.SetActive(false);
+        currentChannel = 0;
+        timer = 0f;
+        isCreepyActive = false;
+        creepyTimer = 0f;
+        isPausing = false;
+        pauseTimer = 0f;
+        flickerActive = false;
+        UpdateStaticAudio();
+    }
+
+    void SetTVMaterial(Material mat, bool fullUV = false)
+    {
+        Material[] mats = meshRenderer.materials;
+
+            Material instMat = new Material(mat);
+            instMat.mainTextureScale = Vector2.one;
+            instMat.mainTextureOffset = Vector2.zero;
+            mats[2] = instMat;
+        
+        meshRenderer.materials = mats;
     }
 
     void UpdateStaticAudio()
     {
-        if (isOn && currentChannel < channelMaterials.Length - 1)
+        if (isOn && !isCreepyActive)
         {
-            if (staticAudio != null && !staticAudio.isPlaying)
-                staticAudio.Play();
+            if (staticAudio != null && !staticAudio.isPlaying) staticAudio.Play();
         }
         else
         {
-            if (staticAudio != null && staticAudio.isPlaying)
-                staticAudio.Stop();
+            if (staticAudio != null && staticAudio.isPlaying) staticAudio.Stop();
         }
     }
 }
