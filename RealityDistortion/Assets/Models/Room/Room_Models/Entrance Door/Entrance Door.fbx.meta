@@ -1,54 +1,39 @@
 fileFormatVersion: 2
 guid: d261849567582a94abb8fa3d55935459
 ModelImporter:
-  serializedVersion: 24200
+  serializedVersion: 22200
   internalIDToNameTable: []
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Door_Handle
-    second: {fileID: 2100000, guid: 231234f99ffed4b4daf13081cb2bca3f, type: 2}
+    second: {fileID: 2100000, guid: 841d546d641808a46b36c9035cf73972, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Lock
-    second: {fileID: 2100000, guid: 77fabec79e84b7640910b0af37070212, type: 2}
+    second: {fileID: 2100000, guid: 575d742e2052e354fa384d3d39bb99e3, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Lock_2
-    second: {fileID: 2100000, guid: db616bacb4671924b8e054ddf0b84e4e, type: 2}
+    second: {fileID: 2100000, guid: d80bc799396fbf74e8c818fc6e2747a1, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: WoodWalls_Hallway
-    second: {fileID: 2100000, guid: a4558dfd16291cb4080d16dd26e1296d, type: 2}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: 4K-walllpaper_14-diffuse
-    second: {fileID: 2800000, guid: d3268e96ed202794685e89b6815ce83c, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: 4K-walllpaper_14-normal
-    second: {fileID: 2800000, guid: c571f97ba0a05fd48a167f90f7e2a956, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: 4K-walllpaper_14-specular
-    second: {fileID: 2800000, guid: 5199b4f14c1885e49a0fa0fd75ff6e01, type: 3}
+    second: {fileID: 2100000, guid: f01336f3e2fb09e4a9e3b985a3d5822d, type: 2}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: BMAG-m
-    second: {fileID: 2800000, guid: 81bda3a22ca05464abebb4274884cdec, type: 3}
+    second: {fileID: 2800000, guid: 3beb560888e1f404c96c27c40d181b97, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: Wood-diffuse
-    second: {fileID: 2800000, guid: 1c94ffa350b2e43409f8ee92e810c442, type: 3}
+    second: {fileID: 2800000, guid: 9c95fe585a0e12c4993f7cacb632c7af, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -101,9 +86,6 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
-    generateMeshLods: 0
-    meshLodGenerationFlags: 0
-    maximumMeshLod: -1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
