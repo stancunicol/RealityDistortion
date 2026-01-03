@@ -8,8 +8,11 @@ public class AppearingCharacterAnomaly : MonoBehaviour
     [SerializeField] private float detectionRange = 40f;
 
     [Header("View Angles")]
-    [SerializeField] private float lookAtAngleEnter = 20f; // grade
-    [SerializeField] private float lookAtAngleExit = 35f;  // grade (mai mare!)
+    [SerializeField] private float lookAtAngleEnter = 20f;
+    [SerializeField] private float lookAtAngleExit = 35f;
+
+    [Header("Look Target Offset")]
+    [SerializeField] private Vector3 lookOffset = new Vector3(0f, 1.6f, 0f);
 
     [Header("Appearances")]
     [SerializeField] private int maxAppearances = 2;
@@ -24,49 +27,48 @@ public class AppearingCharacterAnomaly : MonoBehaviour
     private int appearanceCount = 0;
 
     private Renderer[] renderers;
+    private Collider[] colliders;
 
     private void Start()
     {
         if (playerCamera == null && Camera.main != null)
             playerCamera = Camera.main.transform;
 
+        if (playerCamera == null)
+        {
+            enabled = false;
+            return;
+        }
+
         renderers = GetComponentsInChildren<Renderer>(true);
+        colliders = GetComponentsInChildren<Collider>(true);
+
         ForceHide();
 
-        Debug.Log("[Anomaly] Ready.");
     }
 
     private void Update()
     {
         float distance = Vector3.Distance(playerCamera.position, transform.position);
 
-        // ACTIVARE
         if (!activated)
         {
             if (distance <= activationDistance)
             {
                 activated = true;
-                Debug.Log("[Anomaly] ACTIVATED");
             }
             else return;
         }
 
-        if (appearanceCount >= maxAppearances)
-            return;
-
         bool lookingNow = IsLookingAtMe(distance);
 
-        // INTRARE PRIVIRE
         if (lookingNow && !isLookedAt)
         {
-            Debug.Log("[Anomaly] START LOOK");
             isLookedAt = true;
             Show();
         }
-        // IESIRE PRIVIRE
         else if (!lookingNow && isLookedAt)
         {
-            Debug.Log("[Anomaly] STOP LOOK");
             isLookedAt = false;
             Hide();
         }
@@ -80,45 +82,66 @@ public class AppearingCharacterAnomaly : MonoBehaviour
         if (distance > detectionRange)
             return false;
 
-        Vector3 toMe = (transform.position - playerCamera.position).normalized;
-        float angle = Vector3.Angle(playerCamera.forward, toMe);
+        Vector3 lookTarget = transform.position + lookOffset;
+        Vector3 toTarget = (lookTarget - playerCamera.position).normalized;
 
-        if (!isLookedAt)
-            return angle <= lookAtAngleEnter;
-        else
-            return angle <= lookAtAngleExit;
+        float angle = Vector3.Angle(playerCamera.forward, toTarget);
+
+        return !isLookedAt
+            ? angle <= lookAtAngleEnter
+            : angle <= lookAtAngleExit;
     }
 
     private void Show()
     {
         if (isVisible) return;
+        if (appearanceCount >= maxAppearances)
+            return;
 
-        foreach (var r in renderers)
-            r.enabled = true;
+        foreach (Renderer r in renderers)
+            if (r != null) r.enabled = true;
+
+        foreach (Collider c in colliders)
+            if (c != null) c.enabled = true;
 
         isVisible = true;
         appearanceCount++;
 
-        Debug.Log($"[Anomaly] SHOW ({appearanceCount}/{maxAppearances})");
     }
 
     private void Hide()
     {
         if (!isVisible) return;
 
-        foreach (var r in renderers)
-            r.enabled = false;
+        foreach (Renderer r in renderers)
+            if (r != null) r.enabled = false;
+
+        foreach (Collider c in colliders)
+            if (c != null) c.enabled = false;
 
         isVisible = false;
 
-        Debug.Log("[Anomaly] HIDE");
     }
 
     private void ForceHide()
     {
-        foreach (var r in renderers)
-            r.enabled = false;
+        foreach (Renderer r in renderers)
+            if (r != null) r.enabled = false;
+
+        foreach (Collider c in colliders)
+            if (c != null) c.enabled = false;
 
         isVisible = false;
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(transform.position + lookOffset, 0.15f);
+    }
+#endif
 }
