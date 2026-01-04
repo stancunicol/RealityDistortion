@@ -5,6 +5,7 @@ public class PauseMenu : MonoBehaviour
 {
     public GameObject pauseCanvas;
     private bool isPaused = false;
+    public AudioSource pauseMusic;
 
     void Awake()
     {
@@ -14,6 +15,9 @@ public class PauseMenu : MonoBehaviour
     void Start()
     {
         Debug.Log("START - PauseMenu");
+
+        if (pauseMusic != null)
+            pauseMusic.Stop();
     }
 
     void Update()
@@ -33,6 +37,12 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 0f;
         isPaused = true;
 
+        if (pauseMusic != null)
+        {
+            pauseMusic.loop = true;
+            pauseMusic.Play();
+        }
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -42,6 +52,9 @@ public class PauseMenu : MonoBehaviour
         pauseCanvas.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
+
+        if (pauseMusic != null)
+            pauseMusic.Stop();
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
