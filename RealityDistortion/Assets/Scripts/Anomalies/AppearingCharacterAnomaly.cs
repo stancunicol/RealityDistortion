@@ -21,6 +21,11 @@ public class AppearingCharacterAnomaly : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private string lookAnimBool = "IsLookedAt";
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip badGuyMusic;
+    [SerializeField] [Range(0f, 1f)] private float volume = 0.8f;
+    [SerializeField] private bool loopMusic = true;
+
     private bool activated = false;
     private bool isVisible = false;
     private bool isLookedAt = false;
@@ -28,6 +33,23 @@ public class AppearingCharacterAnomaly : MonoBehaviour
 
     private Renderer[] renderers;
     private Collider[] colliders;
+    private AudioSource audioSource;
+
+    private void Awake()
+    {
+        renderers = GetComponentsInChildren<Renderer>(true);
+        colliders = GetComponentsInChildren<Collider>(true);
+
+        if (badGuyMusic != null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.clip = badGuyMusic;
+            audioSource.volume = volume;
+            audioSource.loop = loopMusic;
+            audioSource.playOnAwake = false;
+            badGuyMusic.LoadAudioData();
+        }
+    }
 
     private void Start()
     {
@@ -39,9 +61,6 @@ public class AppearingCharacterAnomaly : MonoBehaviour
             enabled = false;
             return;
         }
-
-        renderers = GetComponentsInChildren<Renderer>(true);
-        colliders = GetComponentsInChildren<Collider>(true);
 
         ForceHide();
 
@@ -107,6 +126,11 @@ public class AppearingCharacterAnomaly : MonoBehaviour
         isVisible = true;
         appearanceCount++;
 
+        if (audioSource != null && !audioSource.isPlaying)
+        {
+            audioSource.Play();
+        }
+
     }
 
     private void Hide()
@@ -121,6 +145,11 @@ public class AppearingCharacterAnomaly : MonoBehaviour
 
         isVisible = false;
 
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+
     }
 
     private void ForceHide()
@@ -132,6 +161,32 @@ public class AppearingCharacterAnomaly : MonoBehaviour
             if (c != null) c.enabled = false;
 
         isVisible = false;
+    }
+
+    public void ResetAnomaly()
+    {
+        activated = false;
+        isLookedAt = false;
+        appearanceCount = 0;
+        ForceHide();
+        
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+    }
+
+    void OnEnable()
+    {
+        ResetAnomaly();
+    }
+
+    void OnDisable()
+    {
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
     }
 
 #if UNITY_EDITOR
