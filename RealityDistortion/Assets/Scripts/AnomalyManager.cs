@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 
 public class AnomalyManager : MonoBehaviour
 {
@@ -16,6 +17,10 @@ public class AnomalyManager : MonoBehaviour
     [Header("Config")]
     [Tooltip("If true, will automatically find all anomalies in the scene")]
     [SerializeField] private bool autoFindAnomalies = true;
+    
+    [Header("Elevator Display")]
+    [SerializeField] private TextMeshPro[] floorDisplayTexts;
+    [SerializeField] private string floorPrefix = "FLOOR ";
     
     [Header("Game Over")]
     public UnityEvent onGameOver;
@@ -174,6 +179,8 @@ public class AnomalyManager : MonoBehaviour
         {
             Debug.Log($"[AnomalyManager] Level {level} loaded with {activeAnomalies.Count} anomalies");
         }
+        
+        UpdateFloorDisplay();
     }
     
     public void NextLevel()
@@ -195,6 +202,21 @@ public class AnomalyManager : MonoBehaviour
     public int GetCurrentLevel()
     {
         return currentLevel;
+    }
+    
+    private void UpdateFloorDisplay()
+    {
+        if (floorDisplayTexts != null && floorDisplayTexts.Length > 0)
+        {
+            int displayFloor = 3 - currentLevel;
+            foreach (TextMeshPro displayText in floorDisplayTexts)
+            {
+                if (displayText != null)
+                {
+                    displayText.text = displayFloor.ToString();
+                }
+            }
+        }
     }
     
     private void ResetAndDeactivateAllAnomalies()
