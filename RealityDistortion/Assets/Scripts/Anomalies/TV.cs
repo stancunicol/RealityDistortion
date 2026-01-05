@@ -16,6 +16,11 @@ public class TV : MonoBehaviour
     [SerializeField] private VideoPlayer videoPlayer;
     [SerializeField] private float horizontalThreshold = 35f;
     [SerializeField] private Transform playerCamera;
+    [SerializeField] private GameObject Misc;
+    [SerializeField] private GameObject Button1;
+
+    [SerializeField] private GameObject Button2;
+
 
     private MeshRenderer meshRenderer;
     private bool isOn = false;
@@ -132,5 +137,35 @@ public class TV : MonoBehaviour
         {
             if (staticAudio != null && staticAudio.isPlaying) staticAudio.Stop();
         }
+    }
+
+    public void ResetAnomaly()
+    {
+        isOn = false;
+        currentChannel = 0;
+        isCreepyStage = false;
+        isPausing = false;
+        pauseTimer = 0f;
+        if (meshRenderer != null)
+        {
+            meshRenderer.material = screenOff;
+        }
+        if (staticAudio != null && staticAudio.isPlaying) staticAudio.Stop();
+        if (videoPlayer != null) videoPlayer.enabled = false;
+        if (Misc != null) Misc.SetActive(false);
+        if (Button1 != null) Button1.SetActive(false);
+        if (Button2 != null) Button2.SetActive(false);
+    }
+
+    void OnEnable()
+    {
+        if (Misc != null) Misc.SetActive(true);
+        if (Button1 != null) Button1.SetActive(true);
+        if (Button2 != null) Button2.SetActive(true);
+    }
+
+    void OnDisable()
+    {
+        ResetAnomaly();
     }
 }

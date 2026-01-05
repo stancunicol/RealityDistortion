@@ -23,6 +23,7 @@ public class AnomalyManager : MonoBehaviour
     [SerializeField] private int gameOverFontSize = 48;
     [SerializeField] private Color gameOverTextColor = Color.red;
     [SerializeField] private float gameOverDelay = 3f;
+    [SerializeField] private float gameOverFadeDuration = 1f;
     [SerializeField] private string mainMenuSceneName = "MenuScene";
     
     [Header("Victory")]
@@ -31,6 +32,7 @@ public class AnomalyManager : MonoBehaviour
     [SerializeField] private int victoryFontSize = 48;
     [SerializeField] private Color victoryTextColor = Color.green;
     [SerializeField] private float victoryDelay = 5f;
+    [SerializeField] private float victoryFadeDuration = 1f;
     
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = true;
@@ -273,7 +275,6 @@ public class AnomalyManager : MonoBehaviour
         isGameOver = true;
         gameOverTimer = 0f;
         
-        // Disable all elevator buttons
         ElevatorButton[] buttons = FindObjectsOfType<ElevatorButton>();
         foreach (ElevatorButton button in buttons)
         {
@@ -293,7 +294,6 @@ public class AnomalyManager : MonoBehaviour
         hasWon = true;
         victoryTimer = 0f;
         
-        // Disable all elevator buttons
         ElevatorButton[] buttons = FindObjectsOfType<ElevatorButton>();
         foreach (ElevatorButton button in buttons)
         {
@@ -309,7 +309,6 @@ public class AnomalyManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         
-        // Unlock and show cursor for menu
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         
@@ -323,15 +322,15 @@ public class AnomalyManager : MonoBehaviour
     {
         if (isGameOver)
         {
-            // Draw black background
-            GUI.color = Color.black;
+            float fadeAlpha = Mathf.Clamp01(gameOverTimer / gameOverFadeDuration);
+            
+            GUI.color = new Color(0, 0, 0, fadeAlpha);
             GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
             
-            // Draw game over text
             GUIStyle style = new GUIStyle(GUI.skin.label);
             style.fontSize = gameOverFontSize;
             style.fontStyle = FontStyle.Bold;
-            style.normal.textColor = gameOverTextColor;
+            style.normal.textColor = new Color(gameOverTextColor.r, gameOverTextColor.g, gameOverTextColor.b, fadeAlpha);
             style.alignment = TextAnchor.MiddleCenter;
             
             float width = Screen.width;
@@ -339,26 +338,24 @@ public class AnomalyManager : MonoBehaviour
             float x = 0;
             float y = (Screen.height - height) / 2;
             
-            // Draw shadow
-            GUI.color = new Color(0, 0, 0, 0.8f);
+            GUI.color = new Color(0, 0, 0, 0.8f * fadeAlpha);
             GUI.Label(new Rect(x + 3, y + 3, width, height), gameOverMessage, style);
             
-            // Draw main text
-            GUI.color = Color.white;
+            GUI.color = new Color(1, 1, 1, fadeAlpha);
             GUI.Label(new Rect(x, y, width, height), gameOverMessage, style);
         }
         
         if (hasWon)
         {
-            // Draw black background
-            GUI.color = Color.black;
+            float fadeAlpha = Mathf.Clamp01(victoryTimer / victoryFadeDuration);
+            
+            GUI.color = new Color(0, 0, 0, fadeAlpha);
             GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
             
-            // Draw victory text
             GUIStyle style = new GUIStyle(GUI.skin.label);
             style.fontSize = victoryFontSize;
             style.fontStyle = FontStyle.Bold;
-            style.normal.textColor = victoryTextColor;
+            style.normal.textColor = new Color(victoryTextColor.r, victoryTextColor.g, victoryTextColor.b, fadeAlpha);
             style.alignment = TextAnchor.MiddleCenter;
             
             float width = Screen.width;
@@ -366,12 +363,10 @@ public class AnomalyManager : MonoBehaviour
             float x = 0;
             float y = (Screen.height - height) / 2;
             
-            // Draw shadow
-            GUI.color = new Color(0, 0, 0, 0.8f);
+            GUI.color = new Color(0, 0, 0, 0.8f * fadeAlpha);
             GUI.Label(new Rect(x + 3, y + 3, width, height), victoryMessage, style);
             
-            // Draw main text
-            GUI.color = Color.white;
+            GUI.color = new Color(1, 1, 1, fadeAlpha);
             GUI.Label(new Rect(x, y, width, height), victoryMessage, style);
         }
     }
