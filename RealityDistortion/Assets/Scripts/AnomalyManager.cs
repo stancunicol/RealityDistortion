@@ -103,7 +103,8 @@ public class AnomalyManager : MonoBehaviour
         }
         
         currentLevel = level;
-        DeactivateAllAnomalies();
+        
+        ResetAndDeactivateAllAnomalies();
         
         if (!levelAnomalies.ContainsKey(level))
         {
@@ -180,6 +181,42 @@ public class AnomalyManager : MonoBehaviour
         activeAnomalies.Clear();
     }
     
+    private void ResetAndDeactivateAllAnomalies()
+    {
+        foreach (GameObject anomaly in allAnomaliesInScene)
+        {
+            if (anomaly != null)
+            {
+                anomaly.SetActive(false);
+                anomaly.SetActive(true);
+                
+                Animator animator = anomaly.GetComponent<Animator>();
+                if (animator != null)
+                {
+                    animator.Rebind();
+                    animator.Update(0f);
+                }
+                
+                MonoBehaviour[] scripts = anomaly.GetComponents<MonoBehaviour>();
+                foreach (MonoBehaviour script in scripts)
+                {
+                    if (script != null && script.enabled)
+                    {
+                        script.enabled = false;
+                        script.enabled = true;
+                    }
+                }
+                
+                anomaly.SetActive(false);
+                
+                if (showDebugLogs)
+                    Debug.Log($"[AnomalyManager] Reset anomaly: {anomaly.name}");
+            }
+        }
+        
+        activeAnomalies.Clear();
+    }
+    
     public List<GameObject> GetActiveAnomalies()
     {
         return new List<GameObject>(activeAnomalies);
@@ -188,6 +225,40 @@ public class AnomalyManager : MonoBehaviour
     public bool IsAnomalyActive(GameObject anomaly)
     {
         return activeAnomalies.Contains(anomaly);
+    }
+    
+    public bool CurrentLevelHasAnomalies()
+    {
+        if (!levelAnomalies.ContainsKey(currentLevel))
+            return false;
+        
+        return levelAnomalies[currentLevel].Count > 0;
+    }
+    
+    public int GetCurrentLevelAnomalyCount()
+    {
+        if (!levelAnomalies.ContainsKey(currentLevel))
+            return 0;
+        
+        return levelAnomalies[currentLevel].Count;
+    }
+    
+    public bool CheckPlayerChoice(bool playerSaysAnomaliesExist)
+    {
+        bool actuallyHasAnomalies = CurrentLevelHasAnomalies();
+        bool isCorrect = playerSaysAnomaliesExist == actuallyHasAnomalies;
+        
+        if (showDebugLogs)
+        {
+            string playerChoice = playerSaysAnomaliesExist ? "ANOMALIES EXIST" : "NO ANOMALIES";
+            string reality = actuallyHasAnomalies ? "has anomalies" : "has NO anomalies";
+            string result = isCorrect ? "CORRECT" : "WRONG";
+            
+            Debug.Log($"[AnomalyManager] Level {currentLevel} {reality}");
+            Debug.Log($"[AnomalyManager] Player chose: {playerChoice} - {result}!");
+        }
+        
+        return isCorrect;
     }
 
 #if UNITY_EDITOR

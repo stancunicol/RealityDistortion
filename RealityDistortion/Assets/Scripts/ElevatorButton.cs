@@ -166,7 +166,33 @@ public class ElevatorButton : MonoBehaviour
             buttonSound.Play();
         }
         
+        CheckAnswerAndProceed();
+        
         onButtonPressed?.Invoke();
+    }
+    
+    private void CheckAnswerAndProceed()
+    {
+        AnomalyManager anomalyManager = FindObjectOfType<AnomalyManager>();
+        
+        if (anomalyManager == null)
+        {
+            Debug.LogWarning("[ElevatorButton] AnomalyManager not found in scene!");
+            return;
+        }
+        
+        bool playerSaysAnomaliesExist = isGoodButton;
+        bool isCorrect = anomalyManager.CheckPlayerChoice(playerSaysAnomaliesExist);
+        
+        if (isCorrect)
+        {
+            Debug.Log($"[ElevatorButton] Correct choice! Moving to next level...");
+            anomalyManager.NextLevel();
+        }
+        else
+        {
+            Debug.Log($"[ElevatorButton] Wrong choice! Nothing happens for now...");
+        }
     }
     
     private void ResetButton()

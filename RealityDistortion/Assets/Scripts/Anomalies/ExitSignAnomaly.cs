@@ -56,6 +56,37 @@ public class ExitSignAnomaly : MonoBehaviour
         {
             enabled = false;
         }
+        
+        ResetAnomaly();
+    }
+    
+    private void OnEnable()
+    {
+        ResetAnomaly();
+    }
+    
+    private void ResetAnomaly()
+    {
+        timer = 0f;
+        anomalyTimer = 0f;
+        anomalyActive = false;
+        anomalyShown = false;
+        isFlickering = false;
+        currentFlicker = 0;
+        currentSession = 0;
+        flickerTimer = 0f;
+        nextFlickerTime = 0f;
+        showingAnomalyTexture = false;
+        
+        if (normalTexture != null && signRenderer != null)
+        {
+            signRenderer.material.mainTexture = normalTexture;
+        }
+        
+        if (bodyRenderer != null)
+        {
+            bodyRenderer.material.SetColor("_EmissionColor", normalEmissionColor);
+        }
     }
 
     void Update()
