@@ -59,6 +59,9 @@ public class ElevatorButton : MonoBehaviour
     
     private void Update()
     {
+        if (!enabled)
+            return;
+            
         CheckHover();
         
         if (isPressed)
@@ -79,6 +82,11 @@ public class ElevatorButton : MonoBehaviour
         {
             PressButton();
         }
+    }
+    
+    private void OnDisable()
+    {
+        isHovering = false;
     }
     
     private void CheckHover()
@@ -191,7 +199,8 @@ public class ElevatorButton : MonoBehaviour
         }
         else
         {
-            Debug.Log($"[ElevatorButton] Wrong choice! Nothing happens for now...");
+            Debug.Log($"[ElevatorButton] Wrong choice! GAME OVER!");
+            anomalyManager.TriggerGameOver();
         }
     }
     

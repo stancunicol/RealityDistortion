@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,12 +17,31 @@ public class AnomalyManager : MonoBehaviour
     [Tooltip("If true, will automatically find all anomalies in the scene")]
     [SerializeField] private bool autoFindAnomalies = true;
     
+    [Header("Game Over")]
+    public UnityEvent onGameOver;
+    [SerializeField] private string gameOverMessage = "GAME OVER\nYou made the wrong choice...";
+    [SerializeField] private int gameOverFontSize = 48;
+    [SerializeField] private Color gameOverTextColor = Color.red;
+    [SerializeField] private float gameOverDelay = 3f;
+    [SerializeField] private string mainMenuSceneName = "MenuScene";
+    
+    [Header("Victory")]
+    public UnityEvent onVictory;
+    [SerializeField] private string victoryMessage = "YOU ESCAPED!\nCongratulations!";
+    [SerializeField] private int victoryFontSize = 48;
+    [SerializeField] private Color victoryTextColor = Color.green;
+    [SerializeField] private float victoryDelay = 5f;
+    
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = true;
     
     private List<GameObject> activeAnomalies = new List<GameObject>();
     private List<GameObject> allAnomaliesInScene = new List<GameObject>();
     private Dictionary<int, List<GameObject>> levelAnomalies = new Dictionary<int, List<GameObject>>();
+    private bool isGameOver = false;
+    private float gameOverTimer = 0f;
+    private bool hasWon = false;
+    private float victoryTimer = 0f;
     
     private void Awake()
     {
@@ -35,6 +56,29 @@ public class AnomalyManager : MonoBehaviour
     private void Start()
     {
         LoadLevelAnomalies(currentLevel);
+    }
+    
+    private void Update()
+    {
+        if (isGameOver)
+        {
+            gameOverTimer += Time.unscaledDeltaTime;
+            
+            if (gameOverTimer >= gameOverDelay)
+            {
+                LoadMainMenu();
+            }
+        }
+        
+        if (hasWon)
+        {
+            victoryTimer += Time.unscaledDeltaTime;
+            
+            if (victoryTimer >= victoryDelay)
+            {
+                LoadMainMenu();
+            }
+        }
     }
     
     private void FindAllAnomaliesInScene()
@@ -140,45 +184,15 @@ public class AnomalyManager : MonoBehaviour
         else
         {
             if (showDebugLogs)
-                Debug.Log("[AnomalyManager] Already at max level (3)");
-        }
-    }
-    
-    public void PreviousLevel()
-    {
-        int prevLevel = currentLevel - 1;
-        if (prevLevel >= 0)
-        {
-            LoadLevelAnomalies(prevLevel);
-        }
-        else
-        {
-            if (showDebugLogs)
-                Debug.Log("[AnomalyManager] Already at min level (0)");
+                Debug.Log("[AnomalyManager] Player completed all levels - Victory!");
+            
+            TriggerVictory();
         }
     }
     
     public int GetCurrentLevel()
     {
         return currentLevel;
-    }
-    
-    public void SelectAndActivateAnomalies()
-    {
-        LoadLevelAnomalies(currentLevel);
-    }
-    
-    private void DeactivateAllAnomalies()
-    {
-        foreach (GameObject anomaly in allAnomaliesInScene)
-        {
-            if (anomaly != null)
-            {
-                anomaly.SetActive(false);
-            }
-        }
-        
-        activeAnomalies.Clear();
     }
     
     private void ResetAndDeactivateAllAnomalies()
@@ -217,16 +231,6 @@ public class AnomalyManager : MonoBehaviour
         activeAnomalies.Clear();
     }
     
-    public List<GameObject> GetActiveAnomalies()
-    {
-        return new List<GameObject>(activeAnomalies);
-    }
-    
-    public bool IsAnomalyActive(GameObject anomaly)
-    {
-        return activeAnomalies.Contains(anomaly);
-    }
-    
     public bool CurrentLevelHasAnomalies()
     {
         if (!levelAnomalies.ContainsKey(currentLevel))
@@ -260,6 +264,117 @@ public class AnomalyManager : MonoBehaviour
         
         return isCorrect;
     }
+    
+    public void TriggerGameOver()
+    {
+        if (showDebugLogs)
+            Debug.Log("[AnomalyManager] GAME OVER - Wrong choice!");
+        
+        isGameOver = true;
+        gameOverTimer = 0f;
+        
+        // Disable all elevator buttons
+        ElevatorButton[] buttons = FindObjectsOfType<ElevatorButton>();
+        foreach (ElevatorButton button in buttons)
+        {
+            button.enabled = false;
+        }
+        
+        onGameOver?.Invoke();
+        
+        Time.timeScale = 0f;
+    }
+    
+    public void TriggerVictory()
+    {
+        if (showDebugLogs)
+            Debug.Log("[AnomalyManager] VICTORY - You escaped!");
+        
+        hasWon = true;
+        victoryTimer = 0f;
+        
+        // Disable all elevator buttons
+        ElevatorButton[] buttons = FindObjectsOfType<ElevatorButton>();
+        foreach (ElevatorButton button in buttons)
+        {
+            button.enabled = false;
+        }
+        
+        onVictory?.Invoke();
+        
+        Time.timeScale = 0f;
+    }
+    
+    private void LoadMainMenu()
+    {
+        Time.timeScale = 1f;
+        
+        // Unlock and show cursor for menu
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        
+        if (showDebugLogs)
+            Debug.Log($"[AnomalyManager] Loading main menu: {mainMenuSceneName}");
+        
+        SceneManager.LoadScene(mainMenuSceneName);
+    }
+    
+    private void OnGUI()
+    {
+        if (isGameOver)
+        {
+            // Draw black background
+            GUI.color = Color.black;
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
+            
+            // Draw game over text
+            GUIStyle style = new GUIStyle(GUI.skin.label);
+            style.fontSize = gameOverFontSize;
+            style.fontStyle = FontStyle.Bold;
+            style.normal.textColor = gameOverTextColor;
+            style.alignment = TextAnchor.MiddleCenter;
+            
+            float width = Screen.width;
+            float height = 200;
+            float x = 0;
+            float y = (Screen.height - height) / 2;
+            
+            // Draw shadow
+            GUI.color = new Color(0, 0, 0, 0.8f);
+            GUI.Label(new Rect(x + 3, y + 3, width, height), gameOverMessage, style);
+            
+            // Draw main text
+            GUI.color = Color.white;
+            GUI.Label(new Rect(x, y, width, height), gameOverMessage, style);
+        }
+        
+        if (hasWon)
+        {
+            // Draw black background
+            GUI.color = Color.black;
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
+            
+            // Draw victory text
+            GUIStyle style = new GUIStyle(GUI.skin.label);
+            style.fontSize = victoryFontSize;
+            style.fontStyle = FontStyle.Bold;
+            style.normal.textColor = victoryTextColor;
+            style.alignment = TextAnchor.MiddleCenter;
+            
+            float width = Screen.width;
+            float height = 200;
+            float x = 0;
+            float y = (Screen.height - height) / 2;
+            
+            // Draw shadow
+            GUI.color = new Color(0, 0, 0, 0.8f);
+            GUI.Label(new Rect(x + 3, y + 3, width, height), victoryMessage, style);
+            
+            // Draw main text
+            GUI.color = Color.white;
+            GUI.Label(new Rect(x, y, width, height), victoryMessage, style);
+        }
+    }
 
 #if UNITY_EDITOR
     [ContextMenu("Refresh Anomalies List")]
@@ -267,24 +382,6 @@ public class AnomalyManager : MonoBehaviour
     {
         FindAllAnomaliesInScene();
         GenerateAnomaliesForAllLevels();
-    }
-    
-    [ContextMenu("Test Select Anomalies")]
-    private void TestSelectAnomalies()
-    {
-        SelectAndActivateAnomalies();
-    }
-    
-    [ContextMenu("Go to Next Level")]
-    private void TestNextLevel()
-    {
-        NextLevel();
-    }
-    
-    [ContextMenu("Go to Previous Level")]
-    private void TestPreviousLevel()
-    {
-        PreviousLevel();
     }
 #endif
 }
