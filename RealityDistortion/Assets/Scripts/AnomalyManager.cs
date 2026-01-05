@@ -4,11 +4,14 @@ using System.Linq;
 
 public class AnomalyManager : MonoBehaviour
 {
-    [Header("Config")]
-    [Tooltip("How many anomalies to activate in the scene")]
-    [Range(0, 10)]
-    [SerializeField] private int anomalyCount = 2;
+    [Header("Level System")]
+    [Tooltip("Current floor level (0-3 for 4 floors)")]
+    [SerializeField] private int currentLevel = 0;
+    [Tooltip("Maximum number of anomalies per floor")]
+    [Range(0, 2)]
+    [SerializeField] private int maxAnomaliesPerFloor = 2;
     
+    [Header("Config")]
     [Tooltip("If true, will automatically find all anomalies in the scene")]
     [SerializeField] private bool autoFindAnomalies = true;
     
@@ -17,6 +20,7 @@ public class AnomalyManager : MonoBehaviour
     
     private List<GameObject> activeAnomalies = new List<GameObject>();
     private List<GameObject> allAnomaliesInScene = new List<GameObject>();
+    private Dictionary<int, List<GameObject>> levelAnomalies = new Dictionary<int, List<GameObject>>();
     
     private void Awake()
     {
@@ -24,11 +28,13 @@ public class AnomalyManager : MonoBehaviour
         {
             FindAllAnomaliesInScene();
         }
+        
+        GenerateAnomaliesForAllLevels();
     }
     
     private void Start()
     {
-        SelectAndActivateAnomalies();
+        LoadLevelAnomalies(currentLevel);
     }
     
     private void FindAllAnomaliesInScene()
@@ -64,39 +70,101 @@ public class AnomalyManager : MonoBehaviour
         }
     }
     
-    public void SelectAndActivateAnomalies()
+    private void GenerateAnomaliesForAllLevels()
     {
+        levelAnomalies.Clear();
+        
+        for (int level = 0; level < 4; level++)
+        {
+            int anomalyCountForLevel = Random.Range(0, maxAnomaliesPerFloor + 1);
+            
+            List<GameObject> shuffled = allAnomaliesInScene.OrderBy(x => Random.value).ToList();
+            List<GameObject> selectedAnomalies = shuffled.Take(anomalyCountForLevel).ToList();
+            
+            levelAnomalies[level] = selectedAnomalies;
+            
+            if (showDebugLogs)
+            {
+                Debug.Log($"[AnomalyManager] Level {level}: Generated {anomalyCountForLevel} anomalies");
+                foreach (GameObject anomaly in selectedAnomalies)
+                {
+                    Debug.Log($"  - {anomaly.name}");
+                }
+            }
+        }
+    }
+    
+    public void LoadLevelAnomalies(int level)
+    {
+        if (level < 0 || level > 3)
+        {
+            Debug.LogWarning($"[AnomalyManager] Invalid level {level}. Must be between 0-3");
+            return;
+        }
+        
+        currentLevel = level;
         DeactivateAllAnomalies();
         
-        if (allAnomaliesInScene.Count == 0)
+        if (!levelAnomalies.ContainsKey(level))
         {
-            Debug.LogWarning("[AnomalyManager] No anomalies found in the scene");
+            Debug.LogWarning($"[AnomalyManager] No anomalies generated for level {level}");
             return;
         }
         
-        if (anomalyCount == 0)
-        {
-            if (showDebugLogs)
-                Debug.Log("[AnomalyManager] Anomaly count set to 0 - no anomalies will be activated");
-            return;
-        }
-        
-        int anomaliesToSelect = Mathf.Min(anomalyCount, allAnomaliesInScene.Count);
-        
-        List<GameObject> shuffled = allAnomaliesInScene.OrderBy(x => Random.value).ToList();
-        activeAnomalies = shuffled.Take(anomaliesToSelect).ToList();
+        activeAnomalies = levelAnomalies[level];
         
         foreach (GameObject anomaly in activeAnomalies)
         {
-            anomaly.SetActive(true);
+            if (anomaly != null)
+            {
+                anomaly.SetActive(true);
                 if (showDebugLogs)
                     Debug.Log($"[AnomalyManager] Activated anomaly: {anomaly.name}");
+            }
         }
         
         if (showDebugLogs)
         {
-            Debug.Log($"[AnomalyManager] Activated {activeAnomalies.Count} out of {allAnomaliesInScene.Count} possible anomalies");
+            Debug.Log($"[AnomalyManager] Level {level} loaded with {activeAnomalies.Count} anomalies");
         }
+    }
+    
+    public void NextLevel()
+    {
+        int nextLevel = currentLevel + 1;
+        if (nextLevel <= 3)
+        {
+            LoadLevelAnomalies(nextLevel);
+        }
+        else
+        {
+            if (showDebugLogs)
+                Debug.Log("[AnomalyManager] Already at max level (3)");
+        }
+    }
+    
+    public void PreviousLevel()
+    {
+        int prevLevel = currentLevel - 1;
+        if (prevLevel >= 0)
+        {
+            LoadLevelAnomalies(prevLevel);
+        }
+        else
+        {
+            if (showDebugLogs)
+                Debug.Log("[AnomalyManager] Already at min level (0)");
+        }
+    }
+    
+    public int GetCurrentLevel()
+    {
+        return currentLevel;
+    }
+    
+    public void SelectAndActivateAnomalies()
+    {
+        LoadLevelAnomalies(currentLevel);
     }
     
     private void DeactivateAllAnomalies()
@@ -127,12 +195,25 @@ public class AnomalyManager : MonoBehaviour
     private void RefreshAnomaliesList()
     {
         FindAllAnomaliesInScene();
+        GenerateAnomaliesForAllLevels();
     }
     
     [ContextMenu("Test Select Anomalies")]
     private void TestSelectAnomalies()
     {
         SelectAndActivateAnomalies();
+    }
+    
+    [ContextMenu("Go to Next Level")]
+    private void TestNextLevel()
+    {
+        NextLevel();
+    }
+    
+    [ContextMenu("Go to Previous Level")]
+    private void TestPreviousLevel()
+    {
+        PreviousLevel();
     }
 #endif
 }
