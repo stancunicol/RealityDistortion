@@ -15,6 +15,8 @@ public class WaypointRunner : MonoBehaviour
     public bool loopWaypoints = true;
     [Tooltip("If true, will start automatically on Start()")]
     public bool startOnAwake = true;
+    [Tooltip("If true, character will disappear after completing one full route")]
+    public bool disappearAfterComplete = true;
     
     [Header("Animation (Optional)")]
     [Tooltip("Animator for running animation")]
@@ -46,6 +48,7 @@ public class WaypointRunner : MonoBehaviour
     
     private int currentWaypointIndex = 0;
     private bool isRunning = false;
+    private bool hasCompletedLoop = false;
     
     void Start()
     {
@@ -113,6 +116,16 @@ public class WaypointRunner : MonoBehaviour
             if (showDebugLogs)
                 Debug.Log($"[WaypointRunner] Reached waypoint {currentWaypointIndex}: {targetWaypoint.name}");
             
+            // Check if reached waypoint 1 after completing the route
+            if (currentWaypointIndex == 0 && hasCompletedLoop && disappearAfterComplete)
+            {
+                if (showDebugLogs)
+                    Debug.Log("[WaypointRunner] Completed full loop and returned to start. Character disappearing...");
+                StopRunning();
+                gameObject.SetActive(false);
+                return;
+            }
+            
             // Move to next waypoint
             currentWaypointIndex++;
             
@@ -122,6 +135,7 @@ public class WaypointRunner : MonoBehaviour
                 if (loopWaypoints)
                 {
                     currentWaypointIndex = 0;
+                    hasCompletedLoop = true;
                     if (showDebugLogs)
                         Debug.Log("[WaypointRunner] Looping back to first waypoint");
                 }
@@ -130,6 +144,13 @@ public class WaypointRunner : MonoBehaviour
                     StopRunning();
                     if (showDebugLogs)
                         Debug.Log("[WaypointRunner] Finished all waypoints");
+                    
+                    if (disappearAfterComplete)
+                    {
+                        if (showDebugLogs)
+                            Debug.Log("[WaypointRunner] Character disappearing...");
+                        gameObject.SetActive(false);
+                    }
                 }
             }
         }

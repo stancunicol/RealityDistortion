@@ -104,7 +104,7 @@ public class AnomalyManager : MonoBehaviour
         FindAnomaliesByType<ClockPainting>();
         FindAnomaliesByType<AnomalyLamp>();
         FindAnomaliesByType<WomanSculpture>();
-        //FindAnomaliesByType<WaypointRunner>();
+        FindAnomaliesByType<WaypointRunner>();
         
         if (showDebugLogs)
             Debug.Log($"[AnomalyManager] Found {allAnomaliesInScene.Count} anomalies in the scene");
