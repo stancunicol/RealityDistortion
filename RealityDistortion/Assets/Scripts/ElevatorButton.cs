@@ -174,6 +174,13 @@ public class ElevatorButton : MonoBehaviour
             buttonSound.Play();
         }
         
+        // Activează secvența ușilor de lift
+        ElevatorDoor elevatorDoor = FindObjectOfType<ElevatorDoor>();
+        if (elevatorDoor != null)
+        {
+            elevatorDoor.ActivateElevator();
+        }
+        
         CheckAnswerAndProceed();
         
         onButtonPressed?.Invoke();
