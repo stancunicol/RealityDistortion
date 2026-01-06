@@ -3329,6 +3329,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
+    - target: {fileID: -969133860334230515, guid: ca6edc477641dba49bab17f2bee096da, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: fde370bfb1b1828488a5a879f02ab6d1, type: 2}
     - target: {fileID: -744998624917629925, guid: ca6edc477641dba49bab17f2bee096da, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -3349,6 +3353,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
+    - target: {fileID: 6237883146890906056, guid: ca6edc477641dba49bab17f2bee096da, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: fde370bfb1b1828488a5a879f02ab6d1, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -5230,7 +5238,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ea2d6bc60db38064db401aa17207414b, type: 2}
+  - {fileID: 2100000, guid: 5e21ea58f5ccdf04a881e08ad13200f7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
