@@ -2941,6 +2941,18 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: b4a68b6eca4fe6f47987deae31d3da2e, type: 2}
+    - target: {fileID: -4292154010595695564, guid: 85277b792a82e2c4299b5b5c43d001c9, type: 3}
+      propertyPath: m_LocalScale.z
+      value: -0.006266087
+      objectReference: {fileID: 0}
+    - target: {fileID: -4292154010595695564, guid: 85277b792a82e2c4299b5b5c43d001c9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.1171
+      objectReference: {fileID: 0}
+    - target: {fileID: -4292154010595695564, guid: 85277b792a82e2c4299b5b5c43d001c9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.0208
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 85277b792a82e2c4299b5b5c43d001c9, type: 3}
       propertyPath: m_Name
       value: ClockPainting
@@ -7118,15 +7130,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -4292154010595695564, guid: 85277b792a82e2c4299b5b5c43d001c9, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.0065616146
+      value: -0.006561615
       objectReference: {fileID: 0}
     - target: {fileID: -4292154010595695564, guid: 85277b792a82e2c4299b5b5c43d001c9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.134
+      value: -0.1344
       objectReference: {fileID: 0}
     - target: {fileID: -4292154010595695564, guid: 85277b792a82e2c4299b5b5c43d001c9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.001
+      value: -0.0164
       objectReference: {fileID: 0}
     - target: {fileID: -4292154010595695564, guid: 85277b792a82e2c4299b5b5c43d001c9, type: 3}
       propertyPath: m_LocalPosition.z
