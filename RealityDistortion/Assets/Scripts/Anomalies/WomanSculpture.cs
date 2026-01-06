@@ -32,7 +32,7 @@ public class WomanSculpture : MonoBehaviour
 
         float facingAngle = Vector3.Angle(flatSculptureForward, flatToPlayer);
         bool sculptureFacingPlayer = facingAngle < stopThreshold;
-        Debug.Log(facingAngle);
+
         if (!playerLooking && !sculptureFacingPlayer)
         {
             float targetY = Mathf.Atan2(flatToPlayer.x, flatToPlayer.z) * Mathf.Rad2Deg + 180f;

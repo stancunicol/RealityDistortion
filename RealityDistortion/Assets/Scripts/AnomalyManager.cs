@@ -102,6 +102,8 @@ public class AnomalyManager : MonoBehaviour
         FindAnomaliesByType<FootstepZoneDirect>();
         FindAnomaliesByType<BedroomLampController>();
         FindAnomaliesByType<ClockPainting>();
+        FindAnomaliesByType<AnomalyLamp>();
+        FindAnomaliesByType<WomanSculpture>();
         
         if (showDebugLogs)
             Debug.Log($"[AnomalyManager] Found {allAnomaliesInScene.Count} anomalies in the scene");
