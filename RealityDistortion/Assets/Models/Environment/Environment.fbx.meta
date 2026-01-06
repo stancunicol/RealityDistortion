@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: ca6edc477641dba49bab17f2bee096da
 ModelImporter:
-  serializedVersion: 24200
+  serializedVersion: 22200
   internalIDToNameTable: []
   externalObjects:
   - first:
@@ -64,6 +64,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Walls_Room
     second: {fileID: 2100000, guid: a3ef37300e6ddab4cb5cff3f4c28b67a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Window
+    second: {fileID: 2100000, guid: 1e288adce1fc1464c98c6bcf5230ad8c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -136,9 +141,6 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
-    generateMeshLods: 0
-    meshLodGenerationFlags: 0
-    maximumMeshLod: -1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
