@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2618930462854905067}
   - component: {fileID: 7382068939756534373}
   m_Layer: 0
-  m_Name: Area Light
+  m_Name: Spotlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 7295507163291328617}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0.088, z: 0}
+  m_LocalPosition: {x: 0, y: -0.182, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -42,7 +42,7 @@ Light:
   m_GameObject: {fileID: 7295507163291328617}
   m_Enabled: 1
   serializedVersion: 11
-  m_Type: 0
+  m_Type: 2
   m_Color: {r: 1, g: 0.9394646, b: 0.8537736, a: 1}
   m_Intensity: 10
   m_Range: 15
@@ -131,7 +131,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 0102b8c73a6086b459d94f757b03a688, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -29.72
+      value: -17.51
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0102b8c73a6086b459d94f757b03a688, type: 3}
       propertyPath: m_LocalPosition.y
@@ -139,7 +139,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0102b8c73a6086b459d94f757b03a688, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -15.41
+      value: -15.67
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0102b8c73a6086b459d94f757b03a688, type: 3}
       propertyPath: m_LocalRotation.w

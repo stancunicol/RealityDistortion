@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -104,6 +105,7 @@ public class AnomalyManager : MonoBehaviour
         FindAnomaliesByType<ClockPainting>();
         FindAnomaliesByType<AnomalyLamp>();
         FindAnomaliesByType<WomanSculpture>();
+        FindAnomaliesByType<WaypointRunner>();
         
         if (showDebugLogs)
             Debug.Log($"[AnomalyManager] Found {allAnomaliesInScene.Count} anomalies in the scene");
@@ -187,6 +189,13 @@ public class AnomalyManager : MonoBehaviour
     
     public void NextLevel()
     {
+        StartCoroutine(NextLevelCoroutine());
+    }
+    
+    private IEnumerator NextLevelCoroutine()
+    {
+        yield return new WaitForSeconds(3f);
+        
         int nextLevel = currentLevel + 1;
         if (nextLevel <= 3)
         {
