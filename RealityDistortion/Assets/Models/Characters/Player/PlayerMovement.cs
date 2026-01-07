@@ -12,6 +12,15 @@ public class PlayerWalkCamera : MonoBehaviour
     private CharacterController controller;
     private float xRotation = 0f;
     private Vector3 velocity;
+    private int ignoreMouseLookFrames;
+
+    private static float NormalizeSignedAngle(float angleDegrees)
+    {
+        // Convert 0..360 into -180..180
+        if (angleDegrees > 180f)
+            angleDegrees -= 360f;
+        return angleDegrees;
+    }
 
     void Start()
     {
@@ -20,21 +29,44 @@ public class PlayerWalkCamera : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
+        // Cursor locking can produce a one-frame mouse delta spike, which can clamp pitch to +/-90.
+        // Ignore a couple of frames to prevent spawning while looking straight up/down.
+        ignoreMouseLookFrames = 2;
+
+        if (playerCamera == null)
+            playerCamera = GetComponentInChildren<Camera>(true);
+
         if (playerCamera == null)
             playerCamera = Camera.main;
+
+        if (playerCamera == null)
+        {
+            Debug.LogError("PlayerWalkCamera: No Camera found (assign 'playerCamera' or tag a camera as MainCamera). Disabling.");
+            enabled = false;
+            return;
+        }
+
+        xRotation = NormalizeSignedAngle(playerCamera.transform.localEulerAngles.x);
     }
 
     void Update()
     {
         // --- Mouse Look ---
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        if (ignoreMouseLookFrames > 0)
+        {
+            ignoreMouseLookFrames--;
+        }
+        else
+        {
+            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+            xRotation -= mouseY;
+            xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        transform.Rotate(Vector3.up * mouseX);
+            playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+            transform.Rotate(Vector3.up * mouseX);
+        }
 
         // --- Movement ---
         float horizontal = Input.GetAxis("Horizontal");
