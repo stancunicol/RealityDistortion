@@ -341,8 +341,15 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Stancu Nicol-Alexia\nTatu Denis-Dimitrie\nVasile Rare\u0219-Mihail\nVasile
-    Marina"
+  m_text: "Stancu Nicol-Alexia\n- couch, coffee table, nighstand, lamp and bed\n
+    models in Blender;\n- credits, menu and description scenes;\n- pause menu in
+    the game;\n- anomalies (luggage, footsteps sounds, lamps\n switching lights,
+    closind door for the body).\n\n\nTatu Denis-Dimitrie\n- pillar Vase, curved vase
+    and exit signs models in\n Blender;\n- remade the doors for the elevators;\n\n\nVasile
+    Rare\u0219-Mihail\n- environment, nightstand, doors, mirror, sink, hall\n table,
+    closet, ashtray, duck, TV table, TV camera\nand luggage trolley models in Blender;\n\n\nVasile
+    Marina\n- painting and TV models in Blender;\n- anomalies (paintings, TV, doll,
+    clock, lamp,\n statue)."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_sharedMaterial: {fileID: 2164040, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
@@ -1154,7 +1161,18 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: JIROCRAFT - 2D RPG Button 7
+  m_text: "2D RPG Button 7 by JIROCRAFT\nSuitcase 3D free by Julliretta 3D\r\nAmbiance
+    (Dark) by Taim Moor\nToilet Free low-poly 3D model by golrajabi\nFire Extinguisher
+    by crow\nTrash Can by Simal Mai\nBed by trystyrobot\nTable lamp by railizer\nModern
+    Fabric Sofa with Cushions by farmonovsarvar0209\nRound arm chair by tenarchstudio\nTV
+    Support from Hanging Monitor by we3d1234\nStylized Fire Alarm Call Point by alexakoi\nFaucet
+    pack by BlendWalls77\nShower from Bathroom design minimalism by Khabib554\nConion
+    Ceiling Fan by Mehdi Shahsavan\nPower outlet light switch by Mehdi Shahsavan\nToilet
+    Paper Holder by Mehdi Shahsavan\nVase Flower Pot by Mehdi Shahsavan\nVictorian
+    curtains by Abdullah Mohammed\nCareless Whisper by George Michael\nMIX FURNITURE
+    PACK by ZNS3D\nVINTAGE LIVING ROOM 3D GAME PACK by ZNS3D\nMeisje met de parel
+    by Danny Ingrassia\nDemon Doll G1 by Helen Nova\nAlarm clock by Vermos\nWall
+    Lamp - 2048px\xB2 by Mark Peters\nClay Woman Sculpture Raw Scan by Jordan F"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_sharedMaterial: {fileID: 2164040, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
