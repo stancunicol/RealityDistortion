@@ -343,11 +343,35 @@ MonoBehaviour:
       m_Calls: []
   m_text: "Stancu Nicol-Alexia\n- couch, coffee table, nighstand, lamp and bed\n
     models in Blender;\n- credits, menu and description scenes;\n- pause menu in
-    the game;\n- anomalies (luggage, footsteps sounds, lamps\n switching lights,
-    closind door for the body).\n\n\nTatu Denis-Dimitrie\n- pillar Vase, curved vase
-    and exit signs models in\n Blender;\n- remade the doors for the elevators;\n\n\nVasile
+    the game (with sound)\n- anomalies (luggage, footsteps sounds, lamps\n switching
+    lights, closind door for the body).\n\n\nTatu Denis-Dimitrie\n- pillar Vase,
+    curved vase and exit signs models in\n Blender;\n- remade the doors for the elevators;\n-
+    implemented the player character system,\n including WASD movement, mouse-based
+    camera\n rotation, proper colliders, textures, and\n idle/walk/run animations
+    for smooth and\n responsive gameplay;\n- developed the AnomalyManager core system,\n
+    responsible for automatically detecting registered\n anomalies, randomly selecting
+    and generating\n anomalies per level, managing level progression,\nand loading
+    the correct anomalies at runtime;\n- implemented the complete elevator gameplay\n
+    logic, including interactive elevator buttons,\n anomaly checks before level
+    transitions, door\n opening/closing animations, level progression,\n dynamic
+    display of the current floor, and win/lose\n ending screens with automatic redirection;\n-
+    added audio systems and sound design,\n including ambient sounds, anomaly-specific\n
+    music, elevator button click sounds, and elevator\n arrival sounds to enhance
+    immersion;\n- implemented timing and pacing mechanics, such\n as controlled delays
+    before anomalies appear\n after player actions, to avoid instant triggers and\n
+    build suspans;\n- fixed several bugs, including collider fixes,\n material and
+    texture corrections, object\n placement adjustments, prevention of falling\n
+    through the map, and ensuring proper collision\n for dynamic anomalies\n- anomalies
+    (exit sign flickering, bag guy\n appearance, medic runner hallway, disappearing\n
+    obstacles and NPC-based anomalies to increase\n tension and replayability).\n\n\n\nVasile
     Rare\u0219-Mihail\n- environment, nightstand, doors, mirror, sink, hall\n table,
-    closet, ashtray, duck, TV table, TV camera\nand luggage trolley models in Blender;\n\n\nVasile
+    closet, ashtray, duck, TV table, TV camera\nand luggage trolley models in Blender;\n-
+    created the hotel and rooms along with custom\n textures;\n- created and added
+    a variety of models to the\n scene, making sure the textures and UVs were\n correct
+    for the game, and most of them had\n collisions set so that they wouldn't pass
+    through;\n- implemented the entire lighting system using\n Unity's URP, using
+    baked lightmap textures and\n realtime lighting;\n- organizing assets and objects
+    in the hierarchy\n along the way, to be consistent with the game\n structure.\n\n\nVasile
     Marina\n- painting and TV models in Blender;\n- anomalies (paintings, TV, doll,
     clock, lamp,\n statue)."
   m_isRightToLeft: 0
