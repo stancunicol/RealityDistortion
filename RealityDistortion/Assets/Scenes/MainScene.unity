@@ -663,6 +663,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5771284597417303186, guid: 0be617389d3ab044981c996913290c60, type: 3}
   m_PrefabInstance: {fileID: 80374604}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &87092139
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 87092140}
+  m_Layer: 0
+  m_Name: Waypoints (13)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &87092140
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87092139}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -3.38, y: 0.605, z: 21.98}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1895452241}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &90775435
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5733,7 +5764,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentLevel: 0
-  maxAnomaliesPerFloor: 2
+  maxAnomaliesPerFloor: 3
   autoFindAnomalies: 1
   floorDisplayTexts:
   - {fileID: 1112417151}
@@ -7188,7 +7219,7 @@ MonoBehaviour:
   - {fileID: 1372465540}
   - {fileID: 264858586}
   - {fileID: 1287178388}
-  - {fileID: 0}
+  - {fileID: 87092140}
   - {fileID: 1132455965}
   - {fileID: 1185984582}
   - {fileID: 1007323393}
@@ -11171,6 +11202,7 @@ Transform:
   - {fileID: 1372465540}
   - {fileID: 264858586}
   - {fileID: 1287178388}
+  - {fileID: 87092140}
   - {fileID: 1132455965}
   - {fileID: 1185984582}
   - {fileID: 1007323393}

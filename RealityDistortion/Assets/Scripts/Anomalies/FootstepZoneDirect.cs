@@ -37,4 +37,10 @@ public class FootstepZoneDirect : MonoBehaviour
 
         isPlaying = false;
     }
+    
+    public void ResetAnomaly()
+    {
+        StopAllCoroutines();
+        isPlaying = false;
+    }
 }

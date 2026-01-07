@@ -12,8 +12,8 @@ public class AnomalyManager : MonoBehaviour
     [Tooltip("Current floor level (0-3 for 4 floors)")]
     [SerializeField] private int currentLevel = 0;
     [Tooltip("Maximum number of anomalies per floor")]
-    [Range(0, 2)]
-    [SerializeField] private int maxAnomaliesPerFloor = 2;
+    [Range(0, 3)]
+    [SerializeField] private int maxAnomaliesPerFloor = 3;
     
     [Header("Config")]
     [Tooltip("If true, will automatically find all anomalies in the scene")]
@@ -63,6 +63,7 @@ public class AnomalyManager : MonoBehaviour
     
     private void Start()
     {
+        DisableAllAnomalyScripts();
         LoadLevelAnomalies(currentLevel);
     }
     
@@ -129,11 +130,61 @@ public class AnomalyManager : MonoBehaviour
     {
         levelAnomalies.Clear();
         
+        var anomalyGroups = new Dictionary<System.Type, List<GameObject>>();
+        
+        foreach (GameObject anomaly in allAnomaliesInScene)
+        {
+            if (anomaly == null) continue;
+            
+            System.Type anomalyType = null;
+            if (anomaly.GetComponent<AnomalyLamp>() != null) anomalyType = typeof(AnomalyLamp);
+            else if (anomaly.GetComponent<BedroomLampController>() != null) anomalyType = typeof(BedroomLampController);
+            else if (anomaly.GetComponent<ClockPainting>() != null) anomalyType = typeof(ClockPainting);
+            else if (anomaly.GetComponent<CreepyPainting>() != null) anomalyType = typeof(CreepyPainting);
+            else if (anomaly.GetComponent<DoorClose>() != null) anomalyType = typeof(DoorClose);
+            else if (anomaly.GetComponent<WomanSculpture>() != null) anomalyType = typeof(WomanSculpture);
+            else if (anomaly.GetComponent<TV>() != null) anomalyType = typeof(TV);
+            else if (anomaly.GetComponent<Doll>() != null) anomalyType = typeof(Doll);
+            else if (anomaly.GetComponent<ExitSignAnomaly>() != null) anomalyType = typeof(ExitSignAnomaly);
+            else if (anomaly.GetComponent<SuitcaseAnomaly>() != null) anomalyType = typeof(SuitcaseAnomaly);
+            else if (anomaly.GetComponent<FootstepZoneDirect>() != null) anomalyType = typeof(FootstepZoneDirect);
+            else if (anomaly.GetComponent<WaypointRunner>() != null) anomalyType = typeof(WaypointRunner);
+            else if (anomaly.GetComponent<AppearingCharacterAnomaly>() != null) anomalyType = typeof(AppearingCharacterAnomaly);
+            
+            if (anomalyType != null)
+            {
+                if (!anomalyGroups.ContainsKey(anomalyType))
+                {
+                    anomalyGroups[anomalyType] = new List<GameObject>();
+                }
+                anomalyGroups[anomalyType].Add(anomaly);
+            }
+        }
+        
+        var uniqueAnomalies = new List<GameObject>();
+        foreach (var group in anomalyGroups.Values)
+        {
+            if (group.Count > 0)
+            {
+                uniqueAnomalies.Add(group[Random.Range(0, group.Count)]);
+            }
+        }
+        
         for (int level = 0; level < 4; level++)
         {
-            int anomalyCountForLevel = Random.Range(0, maxAnomaliesPerFloor + 1);
+            int anomalyCountForLevel;
             
-            List<GameObject> shuffled = allAnomaliesInScene.OrderBy(x => Random.value).ToList();
+            float randomChance = Random.Range(0f, 1f);
+            if (randomChance < 0.1f)
+            {
+                anomalyCountForLevel = 0;
+            }
+            else
+            {
+                anomalyCountForLevel = Random.Range(1, maxAnomaliesPerFloor + 1);
+            }
+            
+            List<GameObject> shuffled = uniqueAnomalies.OrderBy(x => Random.value).ToList();
             List<GameObject> selectedAnomalies = shuffled.Take(anomalyCountForLevel).ToList();
             
             levelAnomalies[level] = selectedAnomalies;
@@ -143,7 +194,8 @@ public class AnomalyManager : MonoBehaviour
                 Debug.Log($"[AnomalyManager] Level {level}: Generated {anomalyCountForLevel} anomalies");
                 foreach (GameObject anomaly in selectedAnomalies)
                 {
-                    Debug.Log($"  - {anomaly.name}");
+                    string anomalyTypeName = GetAnomalyTypeName(anomaly);
+                    Debug.Log($"  - {anomaly.name} ({anomalyTypeName})");
                 }
             }
         }
@@ -159,7 +211,9 @@ public class AnomalyManager : MonoBehaviour
         
         currentLevel = level;
         
-        ResetAndDeactivateAllAnomalies();
+        ResetAllAnomalies();
+        
+        DisableAllAnomalyScripts();
         
         if (!levelAnomalies.ContainsKey(level))
         {
@@ -173,9 +227,12 @@ public class AnomalyManager : MonoBehaviour
         {
             if (anomaly != null)
             {
-                anomaly.SetActive(true);
+                EnableAnomalyScript(anomaly);
                 if (showDebugLogs)
-                    Debug.Log($"[AnomalyManager] Activated anomaly: {anomaly.name}");
+                {
+                    string anomalyTypeName = GetAnomalyTypeName(anomaly);
+                    Debug.Log($"[AnomalyManager] Activated anomaly script: {anomalyTypeName}");
+                }
             }
         }
         
@@ -230,40 +287,197 @@ public class AnomalyManager : MonoBehaviour
         }
     }
     
-    private void ResetAndDeactivateAllAnomalies()
+    private void ResetAllAnomalies()
     {
         foreach (GameObject anomaly in allAnomaliesInScene)
         {
             if (anomaly != null)
             {
-                anomaly.SetActive(false);
-                anomaly.SetActive(true);
-                
-                Animator animator = anomaly.GetComponent<Animator>();
-                if (animator != null)
-                {
-                    animator.Rebind();
-                    animator.Update(0f);
-                }
-                
-                MonoBehaviour[] scripts = anomaly.GetComponents<MonoBehaviour>();
-                foreach (MonoBehaviour script in scripts)
-                {
-                    if (script != null && script.enabled)
-                    {
-                        script.enabled = false;
-                        script.enabled = true;
-                    }
-                }
-                
-                anomaly.SetActive(false);
-                
-                if (showDebugLogs)
-                    Debug.Log($"[AnomalyManager] Reset anomaly: {anomaly.name}");
+                ResetAnomalyToInitialState(anomaly);
+            }
+        }
+    }
+    
+    private void DisableAllAnomalyScripts()
+    {
+        foreach (GameObject anomaly in allAnomaliesInScene)
+        {
+            if (anomaly != null)
+            {
+                DisableAnomalyScript(anomaly);
             }
         }
         
         activeAnomalies.Clear();
+    }
+    
+    private void ResetAnomalyToInitialState(GameObject anomaly)
+    {
+        var lamp = anomaly.GetComponent<AnomalyLamp>();
+        if (lamp != null)
+        {
+            lamp.ResetAnomaly();
+        }
+        
+        var bedroomLamp = anomaly.GetComponent<BedroomLampController>();
+        if (bedroomLamp != null)
+        {
+            bedroomLamp.ResetAnomaly();
+        }
+        
+        var clockPainting = anomaly.GetComponent<ClockPainting>();
+        if (clockPainting != null)
+        {
+            clockPainting.ResetAnomaly();
+        }
+        
+        var creepyPainting = anomaly.GetComponent<CreepyPainting>();
+        if (creepyPainting != null)
+        {
+            creepyPainting.ResetAnomaly();
+        }
+        
+        var doorClose = anomaly.GetComponent<DoorClose>();
+        if (doorClose != null)
+        {
+            doorClose.ResetAnomaly();
+        }
+        
+        var womanSculpture = anomaly.GetComponent<WomanSculpture>();
+        if (womanSculpture != null)
+        {
+        }
+        
+        var tv = anomaly.GetComponent<TV>();
+        if (tv != null)
+        {
+            tv.ResetAnomaly();
+        }
+        
+        var doll = anomaly.GetComponent<Doll>();
+        if (doll != null)
+        {
+            doll.ResetAnomaly();
+        }
+        
+        var exitSign = anomaly.GetComponent<ExitSignAnomaly>();
+        if (exitSign != null)
+        {
+            exitSign.ResetAnomaly();
+        }
+        
+        var suitcase = anomaly.GetComponent<SuitcaseAnomaly>();
+        if (suitcase != null)
+        {
+            suitcase.ResetAnomaly();
+        }
+        
+        var footstep = anomaly.GetComponent<FootstepZoneDirect>();
+        if (footstep != null)
+        {
+            footstep.ResetAnomaly();
+        }
+        
+        var waypointRunner = anomaly.GetComponent<WaypointRunner>();
+        if (waypointRunner != null)
+        {
+            waypointRunner.ResetAnomaly();
+        }
+        
+        var appearingChar = anomaly.GetComponent<AppearingCharacterAnomaly>();
+        if (appearingChar != null)
+        {
+            appearingChar.ResetAnomaly();
+        }
+    }
+    
+    private void DisableAnomalyScript(GameObject anomaly)
+    {
+        var lamp = anomaly.GetComponent<AnomalyLamp>();
+        if (lamp != null) lamp.enabled = false;
+        
+        var bedroomLamp = anomaly.GetComponent<BedroomLampController>();
+        if (bedroomLamp != null) bedroomLamp.enabled = false;
+        
+        var clockPainting = anomaly.GetComponent<ClockPainting>();
+        if (clockPainting != null) clockPainting.enabled = false;
+        
+        var creepyPainting = anomaly.GetComponent<CreepyPainting>();
+        if (creepyPainting != null) creepyPainting.enabled = false;
+        
+        var doorClose = anomaly.GetComponent<DoorClose>();
+        if (doorClose != null) doorClose.enabled = false;
+        
+        var womanSculpture = anomaly.GetComponent<WomanSculpture>();
+        if (womanSculpture != null) womanSculpture.enabled = false;
+        
+        var tv = anomaly.GetComponent<TV>();
+        if (tv != null) tv.enabled = false;
+        
+        var doll = anomaly.GetComponent<Doll>();
+        if (doll != null) doll.enabled = false;
+        
+        var exitSign = anomaly.GetComponent<ExitSignAnomaly>();
+        if (exitSign != null) exitSign.enabled = false;
+        
+        var suitcase = anomaly.GetComponent<SuitcaseAnomaly>();
+        if (suitcase != null) suitcase.enabled = false;
+        
+        var footstep = anomaly.GetComponent<FootstepZoneDirect>();
+        if (footstep != null) footstep.enabled = false;
+        
+        var waypointRunner = anomaly.GetComponent<WaypointRunner>();
+        if (waypointRunner != null) waypointRunner.enabled = false;
+        
+        var appearingChar = anomaly.GetComponent<AppearingCharacterAnomaly>();
+        if (appearingChar != null) appearingChar.enabled = false;
+    }
+    
+    private void EnableAnomalyScript(GameObject anomaly)
+    {
+        var lamp = anomaly.GetComponent<AnomalyLamp>();
+        if (lamp != null) { lamp.enabled = true; return; }
+        
+        var bedroomLamp = anomaly.GetComponent<BedroomLampController>();
+        if (bedroomLamp != null) { bedroomLamp.enabled = true; return; }
+        
+        var clockPainting = anomaly.GetComponent<ClockPainting>();
+        if (clockPainting != null) { clockPainting.enabled = true; return; }
+        
+        var creepyPainting = anomaly.GetComponent<CreepyPainting>();
+        if (creepyPainting != null) { creepyPainting.enabled = true; return; }
+        
+        var doorClose = anomaly.GetComponent<DoorClose>();
+        if (doorClose != null) { doorClose.enabled = true; return; }
+        
+        var womanSculpture = anomaly.GetComponent<WomanSculpture>();
+        if (womanSculpture != null) { womanSculpture.enabled = true; return; }
+        
+        var tv = anomaly.GetComponent<TV>();
+        if (tv != null) { tv.enabled = true; return; }
+        
+        var doll = anomaly.GetComponent<Doll>();
+        if (doll != null) { doll.enabled = true; return; }
+        
+        var exitSign = anomaly.GetComponent<ExitSignAnomaly>();
+        if (exitSign != null) { exitSign.enabled = true; return; }
+        
+        var suitcase = anomaly.GetComponent<SuitcaseAnomaly>();
+        if (suitcase != null) { suitcase.enabled = true; return; }
+        
+        var footstep = anomaly.GetComponent<FootstepZoneDirect>();
+        if (footstep != null) { footstep.enabled = true; return; }
+        
+        var waypointRunner = anomaly.GetComponent<WaypointRunner>();
+        if (waypointRunner != null) 
+        { 
+            waypointRunner.enabled = true;
+            waypointRunner.StartRunning();
+            return; 
+        }
+        
+        var appearingChar = anomaly.GetComponent<AppearingCharacterAnomaly>();
+        if (appearingChar != null) { appearingChar.enabled = true; return; }
     }
     
     public bool CurrentLevelHasAnomalies()
@@ -402,6 +616,27 @@ public class AnomalyManager : MonoBehaviour
             GUI.color = new Color(1, 1, 1, fadeAlpha);
             GUI.Label(new Rect(x, y, width, height), victoryMessage, style);
         }
+    }
+    
+    private string GetAnomalyTypeName(GameObject anomaly)
+    {
+        if (anomaly == null) return "Unknown";
+        
+        if (anomaly.GetComponent<AnomalyLamp>() != null) return "Flickering Lamp";
+        if (anomaly.GetComponent<BedroomLampController>() != null) return "Color Changing Lamp";
+        if (anomaly.GetComponent<ClockPainting>() != null) return "Clock Painting";
+        if (anomaly.GetComponent<CreepyPainting>() != null) return "Creepy Painting";
+        if (anomaly.GetComponent<DoorClose>() != null) return "Door Close";
+        if (anomaly.GetComponent<WomanSculpture>() != null) return "Woman Sculpture";
+        if (anomaly.GetComponent<TV>() != null) return "TV";
+        if (anomaly.GetComponent<Doll>() != null) return "Doll";
+        if (anomaly.GetComponent<ExitSignAnomaly>() != null) return "Exit Sign";
+        if (anomaly.GetComponent<SuitcaseAnomaly>() != null) return "Suitcase";
+        if (anomaly.GetComponent<FootstepZoneDirect>() != null) return "Footsteps";
+        if (anomaly.GetComponent<WaypointRunner>() != null) return "Running Character";
+        if (anomaly.GetComponent<AppearingCharacterAnomaly>() != null) return "Bad Guy";
+        
+        return anomaly.name;
     }
 
 #if UNITY_EDITOR

@@ -18,17 +18,22 @@ public class ClockPainting : MonoBehaviour
     private float timer = 0f;
     private bool anomalyActivated = false;
 
+    void Awake()
+    {
+        meshRenderer = transform.Find("Plane")?.GetComponent<MeshRenderer>();
+    }
+
     void Start()
     {
-        meshRenderer = transform.Find("Plane").GetComponent<MeshRenderer>();
-        meshRenderer.material = normalMaterial;
+        if (meshRenderer != null && normalMaterial != null)
+            meshRenderer.material = normalMaterial;
         if (tickSound != null) tickSound.Stop();
         if (realClock != null) realClock.SetActive(false);
     }
 
     void Update()
     {
-        if (!playerCamera || !playerTransform || anomalyActivated) return;
+        if (!playerCamera || !playerTransform || anomalyActivated || meshRenderer == null) return;
 
         float distanceToPainting = Vector3.Distance(transform.position, playerTransform.position);
 
@@ -59,7 +64,8 @@ public class ClockPainting : MonoBehaviour
             timer += Time.deltaTime;
             if (timer >= delayAfterLook)
             {
-                meshRenderer.material = anomalyMaterial;
+                if (meshRenderer != null && anomalyMaterial != null)
+                    meshRenderer.material = anomalyMaterial;
                 if (realClock != null) realClock.SetActive(true);
                 if (tickSound != null) tickSound.Play();
                 anomalyActivated = true;
@@ -70,5 +76,16 @@ public class ClockPainting : MonoBehaviour
             timerStarted = false;
             timer = 0f;
         }
+    }
+    
+    public void ResetAnomaly()
+    {
+        if (meshRenderer != null && normalMaterial != null)
+            meshRenderer.material = normalMaterial;
+        if (realClock != null) realClock.SetActive(false);
+        if (tickSound != null) tickSound.Stop();
+        anomalyActivated = false;
+        timerStarted = false;
+        timer = 0f;
     }
 }

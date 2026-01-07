@@ -14,6 +14,19 @@ public class AnomalyLamp : MonoBehaviour
 
     private float flickerTimer = 0f;
     private bool flickerOn = true;
+    
+    void Awake()
+    {
+        // Find the Light component in "Lamp trigger" child object if not assigned
+        if (lampLight == null)
+        {
+            Transform lampTrigger = transform.Find("Lamp trigger");
+            if (lampTrigger != null)
+            {
+                lampLight = lampTrigger.GetComponent<Light>();
+            }
+        }
+    }
 
     private void Update()
     {
@@ -50,5 +63,18 @@ public class AnomalyLamp : MonoBehaviour
 
         if (currentStage == 3) flickerSpeed = 0.1f;
         if (currentStage == 4) flickerSpeed = 0.05f;
+    }
+    
+    public void ResetAnomaly()
+    {
+        currentStage = 0;
+        flickerTimer = 0f;
+        flickerOn = true;
+        if (lampLight != null) lampLight.intensity = intensities[0];
+        if (lampAudio != null)
+        {
+            lampAudio.volume = volumes[0];
+            if (lampAudio.isPlaying) lampAudio.Stop();
+        }
     }
 }

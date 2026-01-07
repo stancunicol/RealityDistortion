@@ -36,7 +36,6 @@ public class GameAudioManager : MonoBehaviour
     
     void Awake()
     {
-        // Singleton pattern
         if (instance != null && instance != this)
         {
             Destroy(gameObject);
@@ -50,7 +49,6 @@ public class GameAudioManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
         
-        // Configurare AudioSource pentru muzică
         musicAudioSource = gameObject.GetComponent<AudioSource>();
         if (musicAudioSource == null)
         {
@@ -59,7 +57,7 @@ public class GameAudioManager : MonoBehaviour
         
         musicAudioSource.loop = true;
         musicAudioSource.playOnAwake = false;
-        musicAudioSource.spatialBlend = 0f; // 2D sound
+        musicAudioSource.spatialBlend = 0f;
         
         UpdateVolumes();
     }
@@ -74,7 +72,6 @@ public class GameAudioManager : MonoBehaviour
     
     void OnValidate()
     {
-        // Actualizează volumul în timp real în Editor
         if (Application.isPlaying)
         {
             UpdateVolumes();
@@ -145,7 +142,6 @@ public class GameAudioManager : MonoBehaviour
     public float GetMusicVolume() => musicVolume;
     public float GetSFXVolume() => sfxVolume;
     
-    // Metodă pentru redarea efectelor sonore cu volumul SFX
     public void PlaySoundEffect(AudioClip clip, Vector3 position)
     {
         if (clip != null)

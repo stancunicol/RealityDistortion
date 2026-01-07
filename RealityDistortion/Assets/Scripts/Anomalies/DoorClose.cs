@@ -30,4 +30,10 @@ public class DoorClose : MonoBehaviour
         transform.eulerAngles = closedRotation;
         isClosed = true;
     }
+    
+    public void ResetAnomaly()
+    {
+        transform.eulerAngles = openRotation;
+        isClosed = false;
+    }
 }

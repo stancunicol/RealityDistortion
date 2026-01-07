@@ -23,32 +23,28 @@ public class TitleBlink : MonoBehaviour
     {
         while (true)
         {
-            // Decide aleator ce se întâmplă în acest ciclu
-            bool fullDisappear = Random.value < 0.5f;  // 50% șansă să dispară complet
+            bool fullDisappear = Random.value < 0.5f;  
 
             if (fullDisappear)
             {
-                // Dispariție completă (enable off)
-                yield return StartCoroutine(FadeTo(0f)); // se estompează întâi
+                yield return StartCoroutine(FadeTo(0f)); 
                 text.enabled = false;
 
                 yield return new WaitForSeconds(Random.Range(minPause, maxPause));
 
                 text.enabled = true;
-                yield return StartCoroutine(FadeTo(1f)); // revine cu fade
+                yield return StartCoroutine(FadeTo(1f));
             }
             else
             {
-                // Doar scade opacitatea (fade parțial)
-                float randomTarget = Random.Range(0.2f, 0.8f); // un nivel aleator de opacitate
+                float randomTarget = Random.Range(0.2f, 0.8f); 
                 yield return StartCoroutine(FadeTo(randomTarget));
 
                 yield return new WaitForSeconds(Random.Range(minPause, maxPause));
 
-                yield return StartCoroutine(FadeTo(1f)); // revine la vizibil
+                yield return StartCoroutine(FadeTo(1f));
             }
 
-            // Pauză înainte de următorul ciclu
             yield return new WaitForSeconds(Random.Range(minPause, maxPause));
         }
     }

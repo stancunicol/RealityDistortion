@@ -65,7 +65,7 @@ public class ExitSignAnomaly : MonoBehaviour
         ResetAnomaly();
     }
     
-    private void ResetAnomaly()
+    public void ResetAnomaly()
     {
         timer = 0f;
         anomalyTimer = 0f;

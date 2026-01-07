@@ -51,7 +51,6 @@ public class ElevatorButton : MonoBehaviour
             playerCamera = Camera.main.transform;
         }
         
-        // Configurare AudioSource
         if (audioSource == null)
         {
             audioSource = GetComponent<AudioSource>();
@@ -186,13 +185,11 @@ public class ElevatorButton : MonoBehaviour
             meshRenderer.material = pressedMaterial;
         }
         
-        // Play button sound
         if (audioSource != null && buttonClickSound != null)
         {
             audioSource.PlayOneShot(buttonClickSound);
         }
         
-        // Activează secvența ușilor de lift
         ElevatorDoor elevatorDoor = FindObjectOfType<ElevatorDoor>();
         if (elevatorDoor != null)
         {

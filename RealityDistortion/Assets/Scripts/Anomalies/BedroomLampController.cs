@@ -14,7 +14,7 @@ public class BedroomLampController : MonoBehaviour
     private Camera playerCamera;
     private bool isWarm = true;
     private float outOfViewTimer = 0f;
-    private bool canChange = true; // permite schimbarea la ieșirea din view
+    private bool canChange = true; 
 
     void Start()
     {
@@ -24,6 +24,8 @@ public class BedroomLampController : MonoBehaviour
 
     void Update()
     {
+        if (playerCamera == null) return;
+        
         if (IsClearlyOutOfView())
         {
             if (canChange)
@@ -32,18 +34,16 @@ public class BedroomLampController : MonoBehaviour
 
                 if (outOfViewTimer >= notInViewDelay)
                 {
-                    // schimbăm starea
                     isWarm = !isWarm;
-                    canChange = false;   // blocăm până revine în view
+                    ApplyLight();  
+                    canChange = false; 
                 }
             }
         }
         else
         {
-            // când revine în view, aplicăm culoarea și resetăm timer
-            ApplyLight();
             outOfViewTimer = 0f;
-            canChange = true;  // permite următoarea schimbare
+            canChange = true;  
         }
     }
 
@@ -64,5 +64,17 @@ public class BedroomLampController : MonoBehaviour
     {
         lampLight.enabled = true;
         lampLight.color = isWarm ? warmColor : coldColor;
+    }
+    
+    public void ResetAnomaly()
+    {
+        isWarm = true;
+        outOfViewTimer = 0f;
+        canChange = true;
+        if (lampLight != null)
+        {
+            lampLight.enabled = true;
+            lampLight.color = warmColor;
+        }
     }
 }
