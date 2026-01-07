@@ -24,7 +24,8 @@ public class ElevatorButton : MonoBehaviour
     [SerializeField] private Color messageColor = Color.white;
     
     [Header("Audio")]
-    [SerializeField] private AudioSource buttonSound;
+    [SerializeField] private AudioClip buttonClickSound;
+    [SerializeField] private AudioSource audioSource;
     
     [Header("Events")]
     [Tooltip("Event called when button is pressed")]
@@ -48,6 +49,22 @@ public class ElevatorButton : MonoBehaviour
         if (Camera.main != null)
         {
             playerCamera = Camera.main.transform;
+        }
+        
+        // Configurare AudioSource
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+        }
+        
+        if (audioSource != null)
+        {
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 1f; // 3D sound
         }
         
         Collider col = GetComponent<Collider>();
@@ -169,9 +186,10 @@ public class ElevatorButton : MonoBehaviour
             meshRenderer.material = pressedMaterial;
         }
         
-        if (buttonSound != null)
+        // Play button sound
+        if (audioSource != null && buttonClickSound != null)
         {
-            buttonSound.Play();
+            audioSource.PlayOneShot(buttonClickSound);
         }
         
         // Activează secvența ușilor de lift
