@@ -70,4 +70,15 @@ public class Doll : MonoBehaviour
         yield return new WaitForSeconds(duration);
         footstep.Stop();
     }
+    
+    public void ResetAnomaly()
+    {
+        hasMoved = false;
+        transform.parent = tableRight;
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+        if (normalDoll != null) normalDoll.SetActive(true);
+        if (creepyDoll != null) creepyDoll.SetActive(false);
+        if (footstep != null && footstep.isPlaying) footstep.Stop();
+    }
 }

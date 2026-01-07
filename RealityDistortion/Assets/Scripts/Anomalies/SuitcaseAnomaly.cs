@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 public class SuitcaseAnomaly : MonoBehaviour
 {
-    public Transform[] positions;   // poziții posibile pentru valiză
-    public float minTime = 3f;      // timp minim între teleporte
-    public float maxTime = 8f;      // timp maxim între teleporte
+    public Transform[] positions;  
+    public float minTime = 3f;    
+    public float maxTime = 8f;     
 
     private Camera playerCamera;
     private float timer;
@@ -60,5 +60,15 @@ public class SuitcaseAnomaly : MonoBehaviour
 
         int index = Random.Range(0, invisiblePositions.Count);
         transform.position = invisiblePositions[index].position;
+    }
+    
+    public void ResetAnomaly()
+    {
+        timer = 0f;
+        nextChange = Random.Range(minTime, maxTime);
+        if (positions != null && positions.Length > 0)
+        {
+            transform.position = positions[0].position;
+        }
     }
 }

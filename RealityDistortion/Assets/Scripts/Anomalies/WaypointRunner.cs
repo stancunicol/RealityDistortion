@@ -14,7 +14,7 @@ public class WaypointRunner : MonoBehaviour
     [Tooltip("If true, will loop through waypoints")]
     public bool loopWaypoints = true;
     [Tooltip("If true, will start automatically on Start()")]
-    public bool startOnAwake = true;
+    public bool startOnAwake = false;
     [Tooltip("If true, character will disappear after completing one full route")]
     public bool disappearAfterComplete = true;
     
@@ -50,6 +50,18 @@ public class WaypointRunner : MonoBehaviour
     private bool isRunning = false;
     private bool hasCompletedLoop = false;
     
+    private Renderer[] renderers;
+    private Collider[] colliders;
+    private bool isVisible = false;
+    
+    void Awake()
+    {
+        renderers = GetComponentsInChildren<Renderer>(true);
+        colliders = GetComponentsInChildren<Collider>(true);
+        
+        ForceHide();
+    }
+    
     void Start()
     {
         if (waypoints == null || waypoints.Length == 0)
@@ -59,7 +71,6 @@ public class WaypointRunner : MonoBehaviour
             return;
         }
         
-        // Check animator
         if (animator == null)
         {
             animator = GetComponent<Animator>();
@@ -77,6 +88,7 @@ public class WaypointRunner : MonoBehaviour
         
         if (startOnAwake)
         {
+            Show();
             StartRunning();
         }
     }
@@ -95,20 +107,16 @@ public class WaypointRunner : MonoBehaviour
             return;
         }
         
-        // Calculate direction to waypoint
         Vector3 direction = (targetWaypoint.position - transform.position).normalized;
         
-        // Move character
         transform.position += direction * runSpeed * Time.deltaTime;
         
-        // Rotate character if enabled
         if (rotateTowardsWaypoint && direction != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
         
-        // Check if reached waypoint
         float distanceToWaypoint = Vector3.Distance(transform.position, targetWaypoint.position);
         
         if (distanceToWaypoint <= waypointReachDistance)
@@ -116,7 +124,6 @@ public class WaypointRunner : MonoBehaviour
             if (showDebugLogs)
                 Debug.Log($"[WaypointRunner] Reached waypoint {currentWaypointIndex}: {targetWaypoint.name}");
             
-            // Check if reached waypoint 1 after completing the route
             if (currentWaypointIndex == 0 && hasCompletedLoop && disappearAfterComplete)
             {
                 if (showDebugLogs)
@@ -126,10 +133,8 @@ public class WaypointRunner : MonoBehaviour
                 return;
             }
             
-            // Move to next waypoint
             currentWaypointIndex++;
             
-            // Check if finished all waypoints
             if (currentWaypointIndex >= waypoints.Length)
             {
                 if (loopWaypoints)
@@ -158,6 +163,7 @@ public class WaypointRunner : MonoBehaviour
     
     public void StartRunning()
     {
+        Show();
         isRunning = true;
         
         if (animator != null && !string.IsNullOrEmpty(runAnimationParameter))
@@ -216,11 +222,61 @@ public class WaypointRunner : MonoBehaviour
     public void ResetToFirstWaypoint()
     {
         currentWaypointIndex = 0;
+        hasCompletedLoop = false;
         
         if (waypoints != null && waypoints.Length > 0 && waypoints[0] != null)
         {
             transform.position = waypoints[0].position;
         }
+    }
+    
+    public void ResetAnomaly()
+    {
+        StopRunning();
+        ForceHide();
+        currentWaypointIndex = 0;
+        hasCompletedLoop = false;
+        if (waypoints != null && waypoints.Length > 0 && waypoints[0] != null)
+        {
+            transform.position = waypoints[0].position;
+        }
+    }
+    
+    private void Show()
+    {
+        if (isVisible) return;
+        
+        foreach (Renderer r in renderers)
+            if (r != null) r.enabled = true;
+        
+        foreach (Collider c in colliders)
+            if (c != null) c.enabled = true;
+        
+        isVisible = true;
+    }
+    
+    private void Hide()
+    {
+        if (!isVisible) return;
+        
+        foreach (Renderer r in renderers)
+            if (r != null) r.enabled = false;
+        
+        foreach (Collider c in colliders)
+            if (c != null) c.enabled = false;
+        
+        isVisible = false;
+    }
+    
+    private void ForceHide()
+    {
+        foreach (Renderer r in renderers)
+            if (r != null) r.enabled = false;
+        
+        foreach (Collider c in colliders)
+            if (c != null) c.enabled = false;
+        
+        isVisible = false;
     }
     
     private void OnDrawGizmos()
@@ -230,7 +286,6 @@ public class WaypointRunner : MonoBehaviour
         
         Gizmos.color = gizmoColor;
         
-        // Draw lines between waypoints
         for (int i = 0; i < waypoints.Length - 1; i++)
         {
             if (waypoints[i] != null && waypoints[i + 1] != null)
@@ -240,13 +295,11 @@ public class WaypointRunner : MonoBehaviour
             }
         }
         
-        // Draw last waypoint
         if (waypoints[waypoints.Length - 1] != null)
         {
             Gizmos.DrawWireSphere(waypoints[waypoints.Length - 1].position, 0.3f);
         }
         
-        // If looping, draw line from last to first
         if (loopWaypoints && waypoints.Length > 1 && waypoints[0] != null && waypoints[waypoints.Length - 1] != null)
         {
             Gizmos.color = new Color(gizmoColor.r, gizmoColor.g, gizmoColor.b, 0.5f);

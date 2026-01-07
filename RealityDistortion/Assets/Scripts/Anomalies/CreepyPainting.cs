@@ -11,10 +11,15 @@ public class CreepyPainting : MonoBehaviour
 
     private MeshRenderer meshRenderer;
 
-    void Start()
+    void Awake()
     {
         meshRenderer = transform.Find("Plane").GetComponent<MeshRenderer>();
-        meshRenderer.material = normalMaterial;
+    }
+
+    void Start()
+    {
+        if (meshRenderer != null && normalMaterial != null)
+            meshRenderer.material = normalMaterial;
 
         if (screamAudio != null)
             screamAudio.Stop();
@@ -22,7 +27,7 @@ public class CreepyPainting : MonoBehaviour
 
     void Update()
     {
-        if (!playerCamera) return;
+        if (!playerCamera || meshRenderer == null) return;
 
         Vector3 directionToPainting = (transform.position - playerCamera.position).normalized;
 
@@ -36,15 +41,25 @@ public class CreepyPainting : MonoBehaviour
 
         if (lookingDirectly)
         {
-            meshRenderer.material = normalMaterial;
+            if (normalMaterial != null)
+                meshRenderer.material = normalMaterial;
             if (screamAudio != null && screamAudio.isPlaying)
                 screamAudio.Stop();
         }
         else
         {
-            meshRenderer.material = creepyMaterial;
+            if (creepyMaterial != null)
+                meshRenderer.material = creepyMaterial;
             if (screamAudio != null && !screamAudio.isPlaying)
                 screamAudio.Play();
         }
+    }
+    
+    public void ResetAnomaly()
+    {
+        if (meshRenderer != null && normalMaterial != null)
+            meshRenderer.material = normalMaterial;
+        if (screamAudio != null && screamAudio.isPlaying)
+            screamAudio.Stop();
     }
 }
