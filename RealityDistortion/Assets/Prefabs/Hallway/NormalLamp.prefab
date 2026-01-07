@@ -51,7 +51,7 @@ Light:
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
-    m_Resolution: -1
+    m_Resolution: 128
     m_CustomResolution: -1
     m_Strength: 1
     m_Bias: 0.05
@@ -112,7 +112,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Version: 3
   m_UsePipelineSettings: 1
-  m_AdditionalLightsShadowResolutionTier: 2
+  m_AdditionalLightsShadowResolutionTier: 1
   m_LightLayerMask: 1
   m_RenderingLayers: 1
   m_CustomShadowLayers: 0
@@ -155,19 +155,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d90ffbf9c6fafa4a8e62f9ac1dc4b0f, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.48818132
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d90ffbf9c6fafa4a8e62f9ac1dc4b0f, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.48818117
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d90ffbf9c6fafa4a8e62f9ac1dc4b0f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.5115459
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d90ffbf9c6fafa4a8e62f9ac1dc4b0f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.5115457
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d90ffbf9c6fafa4a8e62f9ac1dc4b0f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -179,7 +179,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d90ffbf9c6fafa4a8e62f9ac1dc4b0f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 92.678
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1d90ffbf9c6fafa4a8e62f9ac1dc4b0f, type: 3}
       propertyPath: m_Name
