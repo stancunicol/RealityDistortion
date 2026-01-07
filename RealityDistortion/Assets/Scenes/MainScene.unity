@@ -2570,7 +2570,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4108880911306863136, guid: 80695d8173aee4241978882509b151ee, type: 3}
       propertyPath: m_Center.x
-      value: 0.1
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4108880911306863136, guid: 80695d8173aee4241978882509b151ee, type: 3}
       propertyPath: m_IsTrigger
