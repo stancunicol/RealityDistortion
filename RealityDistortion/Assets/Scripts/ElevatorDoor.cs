@@ -28,6 +28,12 @@ public class ElevatorDoor : MonoBehaviour
     public Vector3 leftDoorMoveDirection = Vector3.right;  // Left door moves right to close
     public Vector3 rightDoorMoveDirection = Vector3.left;  // Right door moves left to close
 
+    [Header("Audio")]
+    [Tooltip("Sound to play when elevator moves (after 2 seconds)")]
+    public AudioClip elevatorMovementSound;
+    [Tooltip("AudioSource for playing elevator sounds")]
+    public AudioSource audioSource;
+
     private Vector3 leftOpenPos;
     private Vector3 rightOpenPos;
     private Vector3 leftClosedPos;
@@ -43,7 +49,6 @@ public class ElevatorDoor : MonoBehaviour
 
     void Start()
     {
-        // Auto-find doors if not assigned
         if (doorLeft == null)
         {
             GameObject found = GameObject.Find("Elevator_Door_L");
@@ -93,7 +98,21 @@ public class ElevatorDoor : MonoBehaviour
         
         bool hasSecondElevator = (doorLeft2 != null && doorRight2 != null);
 
-        // DEBUG: Afișează structura ușilor
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+        }
+        
+        if (audioSource != null)
+        {
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 1f; 
+        }
+
         Debug.Log($"[ElevatorDoor] Left door has {doorLeft.childCount} children");
         for (int i = 0; i < doorLeft.childCount; i++)
         {
@@ -108,11 +127,9 @@ public class ElevatorDoor : MonoBehaviour
             Debug.Log($"  - Child {i}: {child.name} (MeshRenderer: {child.GetComponent<MeshRenderer>() != null})");
         }
 
-        // Salvez pozitiile WORLD ca pozitii DESCHISE pentru primul lift
         leftOpenPos = doorLeft.position;
         rightOpenPos = doorRight.position;
 
-        // Pozitiile INCHISE - calculez pe baza directiei de miscare
         leftClosedPos = leftOpenPos + leftDoorMoveDirection.normalized * moveDistance;
         rightClosedPos = rightOpenPos + rightDoorMoveDirection.normalized * moveDistance;
 
@@ -122,7 +139,6 @@ public class ElevatorDoor : MonoBehaviour
             Debug.Log($"[ElevatorDoor] Right door: Open={rightOpenPos}, Closed={rightClosedPos}");
         }
         
-        // Dacă există al doilea lift, salvez și pozițiile lui
         if (hasSecondElevator)
         {
             leftOpenPos2 = doorLeft2.position;
@@ -138,7 +154,6 @@ public class ElevatorDoor : MonoBehaviour
             }
         }
 
-        // Setez pozitia initiala
         if (startOpen)
         {
             doorLeft.position = leftOpenPos;
@@ -205,18 +220,21 @@ public class ElevatorDoor : MonoBehaviour
         
         bool hasSecondElevator = (doorLeft2 != null && doorRight2 != null);
         
-        // Închide ușile dacă sunt deschise
         if (isOpen)
         {
             if (debugMode) Debug.Log("[ElevatorDoor] Closing doors...");
             yield return StartCoroutine(MoveDoors(leftClosedPos, rightClosedPos, leftClosedPos2, rightClosedPos2, false, hasSecondElevator));
         }
 
-        // Așteaptă 2 secunde
         if (debugMode) Debug.Log("[ElevatorDoor] Waiting 2 seconds...");
         yield return new WaitForSeconds(2f);
+        
+        if (audioSource != null && elevatorMovementSound != null)
+        {
+            audioSource.PlayOneShot(elevatorMovementSound);
+            if (debugMode) Debug.Log("[ElevatorDoor] Playing elevator movement sound");
+        }
 
-        // Redeschide ușile
         if (debugMode) Debug.Log("[ElevatorDoor] Opening doors...");
         yield return StartCoroutine(MoveDoors(leftOpenPos, rightOpenPos, leftOpenPos2, rightOpenPos2, true, hasSecondElevator));
         
@@ -244,14 +262,11 @@ public class ElevatorDoor : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
             
-            // Smooth interpolation
             t = t * t * (3f - 2f * t);
             
-            // USE WORLD POSITION - First elevator
             doorLeft.position = Vector3.Lerp(leftStart, leftTarget, t);
             doorRight.position = Vector3.Lerp(rightStart, rightTarget, t);
             
-            // Second elevator if exists
             if (moveSecondElevator)
             {
                 doorLeft2.position = Vector3.Lerp(leftStart2, leftTarget2, t);
@@ -261,7 +276,6 @@ public class ElevatorDoor : MonoBehaviour
             yield return null;
         }
 
-        // Ensure exact final positions
         doorLeft.position = leftTarget;
         doorRight.position = rightTarget;
         
@@ -277,7 +291,6 @@ public class ElevatorDoor : MonoBehaviour
         if (debugMode) Debug.Log($"[ElevatorDoor] Doors finished moving. isOpen={isOpen}");
     }
 
-    // Pentru testare in Editor
     [ContextMenu("Test Open Doors")]
     public void TestOpen() => OpenDoors();
     
