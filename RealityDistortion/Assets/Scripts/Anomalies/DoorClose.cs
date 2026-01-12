@@ -4,15 +4,10 @@ public class DoorClose : MonoBehaviour
 {
     public Transform player;
     public float closeDistance = 3f;
-    public Vector3 closedRotation;
-    private Vector3 openRotation;
+    public GameObject door7;          // Door_7
+    public GameObject door7Locked;    // Door_7_Locked
 
     private bool isClosed = false;
-
-    void Start()
-    {
-        openRotation = transform.eulerAngles;
-    }
 
     void Update()
     {
@@ -27,13 +22,23 @@ public class DoorClose : MonoBehaviour
 
     void CloseDoor()
     {
-        transform.eulerAngles = closedRotation;
+        if (door7 != null)
+            door7.SetActive(false);
+        
+        if (door7Locked != null)
+            door7Locked.SetActive(true);
+        
         isClosed = true;
     }
-    
+
     public void ResetAnomaly()
     {
-        transform.eulerAngles = openRotation;
+        if (door7 != null)
+            door7.SetActive(true);
+        
+        if (door7Locked != null)
+            door7Locked.SetActive(false);
+        
         isClosed = false;
     }
 }
