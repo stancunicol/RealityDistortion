@@ -7,6 +7,20 @@
 
 A first-person psychological horror game built in Unity where perception is your only weapon. Navigate through floors while identifying anomalies in your environment – choose correctly to progress, or face the consequences of your mistakes.
 
+## 📸 Screenshots
+
+<p align="center">
+  <img src="RealityDistortion/Screenshots/gameplay1.png" alt="Gameplay" width="800"/>
+</p>
+
+<p align="center">
+  <img src="RealityDistortion/Screenshots/gameplay2.png" alt="Anomaly Detection" width="800"/>
+</p>
+
+<p align="center">
+  <img src="RealityDistortion/Screenshots/gameplay3.png" alt="Elevator Choice" width="800"/>
+</p>
+
 ## 🎮 Overview
 
 **Reality Distortion** is an atmospheric anomaly detection game where players must carefully observe their surroundings across multiple floors. Each level presents a seemingly identical environment, but anomalies may appear – from subtle visual changes to obvious distortions.
