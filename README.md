@@ -5,9 +5,13 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=flat&logo=windows)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=flat)
 
-A first-person psychological horror game built in Unity where perception is your only weapon. Navigate through floors while identifying anomalies in your environment – choose correctly to progress, or face the consequences of your mistakes.
+**Reality Distortion** is a **first-person psychological horror game** where perception is your only defense.  
 
-## 📸 Screenshots
+> A single missed detail can send you deeper into the distortion.
+
+The player navigates through an unsettling environment filled with **subtle and overt anomalies**, deciding at every floor whether reality is stable — or dangerously wrong.
+
+## In-Game Screenshots
 
 <p align="center">
   <img src="RealityDistortion/Screenshots/gameplay1.png" alt="Gameplay" width="800"/>
@@ -21,141 +25,104 @@ A first-person psychological horror game built in Unity where perception is your
   <img src="RealityDistortion/Screenshots/gameplay3.png" alt="Elevator Choice" width="800"/>
 </p>
 
-## 🎮 Overview
+---
 
-**Reality Distortion** is an atmospheric anomaly detection game where players must carefully observe their surroundings across multiple floors. Each level presents a seemingly identical environment, but anomalies may appear – from subtle visual changes to obvious distortions.
+## 🎮 Core Concept
 
-### Core Gameplay
-- **Observation**: Scan each floor for environmental irregularities
-- **Decision-making**: Choose the correct elevator based on what you observed
-- **Progressive challenge**: Advance through floors with varying anomaly difficulty
-- **Diverse anomaly types**: Visual distortions, audio cues, animated objects, and environmental changes
+Reality Distortion focuses on **attention, memory, and environmental awareness** rather than combat.
 
-## 🛠️ Technical Details
+- Observe the environment carefully  
+- Detect visual, audio, and behavioral anomalies  
+- Make decisions based on perception, not intuition  
+- One wrong choice leads to failure and resets progression  
+- First-person exploration  
+- Randomized anomaly spawning  
+- Decision-based progression system  
+- Psychological tension through atmosphere and uncertainty  
 
-### Built With
-- **Engine**: Unity (Universal Render Pipeline)
-- **Input System**: Unity's New Input System
-- **UI**: TextMesh Pro
-- **Language**: C#
+The game challenges the player to **trust their senses** in an environment designed to deceive them.
 
-### Project Structure
+Each floor introduces new possibilities for distortion, forcing the player to constantly reassess what is _normal_.
+
+## 🧩 Anomaly System
+
+Anomalies are designed to be **modular and extensible**.
+
+### Types of anomalies
+- Visual changes (objects missing, misplaced, duplicated)
+- Audio disturbances
+- Environmental transformations
+- Animated or behavior-based anomalies
+
+### Technical approach
+- Anomalies implement a shared interface (`IActivatableAnomaly`)
+- Centralized anomaly management system
+- Easy to add new anomalies without modifying core gameplay logic
+
+This architecture allows the game to scale naturally as new content is added.
+
+## Technologies Used
+
+- **Unity** (URP – Universal Render Pipeline)
+- **C#**
+- **TextMesh Pro**
+- **Unity New Input System**
+- First-person controller setup
+- Modular gameplay architecture
+
+## Project Structure
+
+The project follows a clean and organized Unity structure:
+
 ```
 Assets/
 ├── Scripts/
-│   ├── AnomalyManager.cs         # Core game logic and level progression
-│   ├── ElevatorController.cs      # Elevator interaction system
-│   ├── ElevatorDoor.cs            # Door animation logic
-│   ├── GameAudioManager.cs        # Audio management system
-│   ├── MenuController.cs          # Main menu functionality
-│   ├── PauseMenu.cs               # In-game pause system
-│   ├── CreditsScroller.cs         # Credits scrolling
-│   └── Anomalies/                 # Individual anomaly implementations
+│   ├── Core systems (managers, controllers)
+│   ├── Anomalies/
+│   └── Interfaces
 ├── Scenes/
-│   ├── MainScene.unity            # Primary gameplay scene
-│   ├── MenuScene.unity            # Main menu
-│   ├── DescriptionScene.unity     # Game instructions
-│   └── CreditsScene.unity         # Credits
-├── Prefabs/                       # Reusable game objects
-├── Models/                        # 3D assets
-├── Audio/                         # Sound effects and music
-└── Sprites/                       # 2D textures and UI elements
+├── Prefabs/
+├── Audio/
+├── Models/
+└── UI/
 ```
 
-### Key Systems
+The codebase is structured to emphasize **readability, modularity, and future extensibility**.
 
-#### Anomaly System
-The game features a modular anomaly system with various types:
-- **Visual Anomalies**: Paintings, sculptures, lighting changes
-- **Audio Anomalies**: Footsteps, ambient sounds
-- **Animated Anomalies**: Moving objects, character appearances
-- **Environmental Anomalies**: Door states, exit signs
+## Project Status
 
-Each anomaly implements the `IActivatableAnomaly` interface for consistent behavior:
-```csharp
-public interface IActivatableAnomaly
-{
-    void ActivateAnomaly();
-    bool IsActivated();
-}
-```
+**Completed academic project**
 
-#### Level Progression
-- Configurable anomaly count per floor (0-3)
-- Dynamic anomaly selection and activation
-- Floor-based progression system
-- Victory and game over conditions
+This project was developed as part of a university team assignment.  
+While the core gameplay and systems are fully implemented, future updates or extensions are not guaranteed.
 
-## 🎯 Features
+---
 
-- ✅ First-person exploration
-- ✅ Dynamic anomaly generation
-- ✅ Multiple unique anomaly types
-- ✅ Progressive difficulty system
-- ✅ Atmospheric audio design
-- ✅ Pause menu and settings
-- ✅ Screenshot functionality
-- ✅ Credits system
+## ▶️ How to Play
 
-## 🚀 Getting Started
+1. Go to the **[Releases](../../releases)** page on GitHub
+2. Download the latest build for Windows
+3. Extract the archive
+4. Run the executable
 
-### Prerequisites
-- Unity 2022.3 or later
-- Required packages (included in project):
-  - Universal Render Pipeline
-  - TextMesh Pro
-  - Input System
+## Why This Project
 
-### Running the Project
-1. Open the project in Unity Hub
-2. Load `MenuScene` to start from the main menu
-3. Or load `MainScene` for direct gameplay testing
-4. Press Play in the Unity Editor
+This project was built to explore:
+- Psychological horror design
+- Player perception and environmental storytelling
+- Modular gameplay systems in Unity
+- Clean and scalable C# architecture for games
 
-### Building
-1. Open **File > Build Settings**
-2. Ensure all scenes are added to the build:
-   - MenuScene
-   - DescriptionScene
-   - MainScene
-   - CreditsScene
-3. Select your target platform
-4. Click **Build** or **Build and Run**
+It serves both as a **game prototype** and a **technical portfolio project**.
 
-## 🎨 Development
+---
 
-### Adding New Anomalies
-1. Create a new script in `Assets/Scripts/Anomalies/`
-2. Implement the `IActivatableAnomaly` interface
-3. Add the anomaly GameObject to the scene
-4. Tag it appropriately for the `AnomalyManager` to detect it
+## Credits
 
-Example:
-```csharp
-public class MyCustomAnomaly : MonoBehaviour, IActivatableAnomaly
-{
-    private bool isActivated = false;
-    
-    public void ActivateAnomaly()
-    {
-        isActivated = true;
-        // Your anomaly logic here
-    }
-    
-    public bool IsActivated()
-    {
-        return isActivated;
-    }
-}
-```
+This project was developed collaboratively by a student team as part of a university assignment.  
+All core systems, gameplay mechanics, and assets were created and integrated through team effort.
 
-### Configuration
-The `AnomalyManager` allows extensive customization:
-- Anomaly count per floor
-- Victory/Game Over messages and timing
-- Floor display settings
-- Debug logging options
 
-## 📝 License
+## 🤝 Contributing
 
-This project is licensed under the **MIT License**. Feel free to use, modify, and distribute this project for any purpose.
+Contributions, suggestions, and feedback are welcome.   Feel free to open an issue or a pull request.
